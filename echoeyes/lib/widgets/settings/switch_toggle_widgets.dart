@@ -19,9 +19,11 @@ class SwitchSettingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isHighContrast = settings.switchMode;
+
     return Card(
-      color: settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
-      elevation: settings.switchMode ? 0 : 2,
+      color: isHighContrast ? const Color(0xFFFFD900) : Colors.white,
+      elevation: isHighContrast ? 0 : 2,
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -39,13 +41,13 @@ class SwitchSettingWidget extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Text(
                     subtitle,
                     style: TextStyle(
                       fontSize: settings.fontSize - 2,
-                      color: Colors.black87,
                       fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
                   ),
                 ],

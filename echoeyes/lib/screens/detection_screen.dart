@@ -11,7 +11,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 late List<CameraDescription> cameras;
 late FlutterTts flutterTts;
 
-Offset _dragPosition = const Offset(65, 30);
 Set<String> spokenLabels = {};
 
 Future<void> main() async {
@@ -133,91 +132,126 @@ class _YoloCamState extends State<YoloCam> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          AspectRatio(
-            aspectRatio: controller.value.aspectRatio,
-            child: CameraPreview(controller),
+          // CAMERA FEED -> TO CHANGE VIEW, ETC.
+          FittedBox(
+            fit: BoxFit.cover,
+            child: SizedBox(
+              width: controller.value.previewSize?.height,
+              height: controller.value.previewSize?.width,
+              child: CameraPreview(controller),
+            ),
           ),
           ...displayBoxesAroundRecognizedObjects(MediaQuery.of(context).size),
-          buildLiveDetectionBox(),
 
+          // BAR, BUTTON @BOTTOM
           Positioned(
-            bottom: 45,
+            bottom: 0,
             width: MediaQuery.of(context).size.width,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // Flash button
-                GestureDetector(
-                  onTap: () async {
-                    if (_currentFlashMode == FlashMode.off) {
-                      await controller.setFlashMode(FlashMode.torch);
-                      setState(() => _currentFlashMode = FlashMode.torch);
-                      await TTSService.speak("Flash on");
-                    } else {
-                      await controller.setFlashMode(FlashMode.off);
-                      setState(() => _currentFlashMode = FlashMode.off);
-                      await TTSService.speak("Flash off");
-                    }
-                  },
-                  child: _circleButton(
-                    icon: Icons.flash_on,
-                    color: Colors.yellow,
-                  ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 30),
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10,
+                    offset: Offset(0, -3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Flash button
+                  GestureDetector(
+                    onTap: () async {
+                      if (_currentFlashMode == FlashMode.off) {
+                        await controller.setFlashMode(FlashMode.torch);
+                        setState(() => _currentFlashMode = FlashMode.torch);
+                        await TTSService.speak("Flash on");
+                      } else {
+                        await controller.setFlashMode(FlashMode.off);
+                        setState(() => _currentFlashMode = FlashMode.off);
+                        await TTSService.speak("Flash off");
+                      }
+                    },
+                    child: _circleButton(
+                      icon: Icons.flash_on,
+                      color: _currentFlashMode == FlashMode.torch
+                          ? Colors.yellow
+                          : Colors.black,
+                    ),
+                  ),
 
-                // Detection start/stop
-                GestureDetector(
-                  onTap: () async {
-                    if (isDetecting) {
-                      await stopDetection();
-                      await flutterTts.stop();
-                      TTSService.clearLabelCache();
-                      await TTSService.speak("Stop Detection");
-                    } else {
-                      await startDetection();
-                      await TTSService.speak("Start Detection");
-                    }
-                  },
-                  child: Container(
-                    height: 80,
-                    width: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(50),
-                          blurRadius: 8,
-                          offset: const Offset(0, 4),
+                  // Detection start/stop
+                  GestureDetector(
+                    onTap: () async {
+                      if (isDetecting) {
+                        await stopDetection();
+                        await flutterTts.stop();
+                        TTSService.clearLabelCache();
+                        await TTSService.speak("Stop Detection");
+                      } else {
+                        await startDetection();
+                        await TTSService.speak("Start Detection");
+                      }
+                    },
+                    child: Container(
+                      height: 80,
+                      width: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(50),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        border: Border.all(
+                          color: Colors.grey.shade400,
+                          width: 3,
                         ),
-                      ],
-                      border: Border.all(color: Colors.grey.shade400, width: 3),
-                    ),
-                    child: Icon(
-                      isDetecting ? Icons.pause : Icons.play_arrow,
-                      color: Colors.black,
-                      size: 35,
-                    ),
-                  ),
-                ),
-
-                // Settings button
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => SettingsScreen(settings: _settings),
                       ),
-                    );
-                    TTSService.speak("Settings");
-                  },
-                  child: _circleButton(
-                    icon: Icons.settings,
-                    color: Colors.black87,
+                      child: Icon(
+                        isDetecting ? Icons.pause : Icons.play_arrow,
+                        color: Colors.black,
+                        size: 35,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+
+                  // Settings button
+                  GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SettingsScreen(settings: _settings),
+                        ),
+                      );
+
+                      /// RELOADING THE SETTINGS
+                      final updatedSettings =
+                          await SettingsService.loadSettings();
+                      setState(() {
+                        _settings = updatedSettings;
+                      });
+
+                      await TTSService.speak("Settings");
+                    },
+                    child: _circleButton(
+                      icon: Icons.settings,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -260,21 +294,9 @@ class _YoloCamState extends State<YoloCam> {
         final label = detection['tag'].toString();
         final box = detection['box'];
         final double confidence = box[4].toDouble();
-
         if (confidence < widget.settings.confidenceThreshold) continue;
 
-        // Distance alerts
-        if (_settings.distanceAlerts) {
-          final double width = (box[2] - box[0]).toDouble();
-          final double height = (box[3] - box[1]).toDouble();
-          if (width > cameraImage.width * 0.4 &&
-              height > cameraImage.height * 0.4) {
-            await flutterTts.speak("$label is very close");
-            _lastSpokenTime = now;
-            break;
-          }
-        }
-
+        // OBJECT DIRECTION -> LEFT, RIGHT, IN FRONT
         if (!spokenLabels.contains(label)) {
           spokenLabels.add(label);
           _lastSpokenTime = now;
@@ -291,9 +313,14 @@ class _YoloCamState extends State<YoloCam> {
       }
     }
 
-    spokenLabels.clear();
+    spokenLabels.removeWhere(
+      (label) => now.difference(_lastSpokenTime).inSeconds > 4,
+    );
 
-    setState(() => yoloResults = result);
+    setState(() {
+      yoloResults = result;
+    });
+    await Future.delayed(const Duration(milliseconds: 600));
   }
 
   Future<void> startDetection() async {
@@ -350,58 +377,18 @@ class _YoloCamState extends State<YoloCam> {
     }).toList();
   }
 
-  Widget buildLiveDetectionBox() {
-    return Positioned(
-      left: _dragPosition.dx,
-      top: _dragPosition.dy,
-      child: GestureDetector(
-        onPanUpdate: (details) {
-          setState(() => _dragPosition += details.delta);
-        },
-        child: Container(
-          constraints: const BoxConstraints(minWidth: 250, maxWidth: 400),
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: const Color.fromRGBO(179, 186, 190, 1).withAlpha(25),
-            border: Border.all(color: Colors.blue.shade100, width: 2),
-          ),
-          child: yoloResults.isEmpty
-              ? Text(
-                  'No Object Detected',
-                  style: MyTextStyles.semiBold.copyWith(
-                    color: Colors.white,
-                    fontSize: 20,
-                  ),
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: yoloResults.map((result) {
-                    final tag = result['tag'];
-                    final conf = (result['box'][4] * 100).toStringAsFixed(2);
-                    return Text(
-                      '$tag: $conf%',
-                      style: MyTextStyles.semiBold.copyWith(
-                        color: Colors.white,
-                        fontSize: 26,
-                      ),
-                    );
-                  }).toList(),
-                ),
-        ),
-      ),
-    );
-  }
-
   /// Circle logic for direction mode
-  String _getObjectDirection(List box, CameraImage image) {
+  String _getObjectDirection(List<dynamic> box, CameraImage cameraImage) {
     final double centerX = (box[0] + box[2]) / 2;
-    final double imageWidth = image.width.toDouble();
+    final double frameCenter = cameraImage.width / 2;
 
-    if (centerX < imageWidth * 0.33) {
+    // Define regions: left (0–40%), center (40–60%), right (60–100%)
+    final double leftBoundary = frameCenter * 0.8;
+    final double rightBoundary = frameCenter * 1.2;
+
+    if (centerX < leftBoundary) {
       return "left";
-    } else if (centerX > imageWidth * 0.66) {
+    } else if (centerX > rightBoundary) {
       return "right";
     } else {
       return "in front";

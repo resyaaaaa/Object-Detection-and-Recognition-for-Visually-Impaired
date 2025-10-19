@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:echoeyes/services/settings_service.dart';
 import 'package:echoeyes/services/tts_service.dart';
@@ -5,7 +6,6 @@ import 'package:echoeyes/widgets/custom_text.dart';
 import 'package:echoeyes/widgets/settings/dropdown_widgets.dart';
 import 'package:echoeyes/widgets/settings/slider_widgets.dart';
 import 'package:echoeyes/widgets/settings/switch_toggle_widgets.dart';
-import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatefulWidget {
   final AppSettings settings;
@@ -46,8 +46,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      _settings = widget.settings;
-      _isLoading = false;
+      setState(() {
+        _settings = widget.settings;
+        _isLoading = false;
+      });
       _showErrorDialog('Failed to load settings: ${e.toString()}');
     }
   }
@@ -56,9 +58,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!_hasChanges) setState(() => _hasChanges = true);
   }
 
+  void _updateSetting(AppSettings Function(AppSettings) updater) {
+    setState(() => _settings = updater(_settings));
+    _markAsChanged();
+  }
+
   Future<void> _saveSettings() async {
     if (_isSaving) return;
     setState(() => _isSaving = true);
+
     try {
       await SettingsService.saveSettings(_settings);
       await TTSService.updateSettings(_settings);
@@ -73,11 +81,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       setState(() => _isSaving = false);
       _showErrorDialog('Failed to save settings: ${e.toString()}');
     }
-  }
-
-  void _updateSetting(AppSettings Function(AppSettings) updater) {
-    setState(() => _settings = updater(_settings));
-    _markAsChanged();
   }
 
   void _showErrorDialog(String error) {
@@ -98,7 +101,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Text('OK',
                 style: MyTextStyles.bold
                     .copyWith(fontSize: _settings.fontSize, color: Colors.black)),
-          )
+          ),
         ],
       ),
     );
@@ -111,8 +114,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor:
             _settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
         title: Text('Unsaved Changes',
-            style: MyTextStyles.bold
-                .copyWith(fontSize: _settings.fontSize + 2, color: Colors.black)),
+            style: MyTextStyles.bold.copyWith(
+                fontSize: _settings.fontSize + 2, color: Colors.black)),
         content: Text('Do you want to save your changes before leaving?',
             style: MyTextStyles.medium
                 .copyWith(fontSize: _settings.fontSize, color: Colors.black)),
@@ -144,10 +147,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (_isLoading) {
       return Scaffold(
         backgroundColor:
-            _settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
+            widget.settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
         body: const Center(
-            child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation(Colors.black))),
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation(Colors.black),
+          ),
+        ),
       );
     }
 
@@ -171,17 +176,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle('Audio Settings'),
-                _buildAudioSettings(),
-                const SizedBox(height: 16),
-                _buildSectionTitle('Detection Settings'),
-                _buildDetectionSettings(),
-                const SizedBox(height: 16),
-                _buildSectionTitle('Display Settings'),
-                _buildDisplaySettings(),
-                const SizedBox(height: 16),
-                _buildSectionTitle('Accessibility'),
-                _buildAccessibilitySettings(),
+                _buildSection('Audio Settings', _buildAudioSettings()),
+                _buildSection('Detection Settings', _buildDetectionSettings()),
+                _buildSection('Display Settings', _buildDisplaySettings()),
+                _buildSection('Accessibility', _buildAccessibilitySettings()),
               ],
             ),
           ),
@@ -213,24 +211,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       valueColor: AlwaysStoppedAnimation(Colors.black),
                     ),
                   )
-                : Text('Save',
+                : Text(
+                    'Save',
                     style: MyTextStyles.bold.copyWith(
                       color:
                           (_hasChanges && !_isSaving) ? Colors.black : Colors.grey,
                       fontSize: _settings.fontSize,
-                    )),
+                    ),
+                  ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSection(String title, Widget content) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(title,
-          style: MyTextStyles.bold.copyWith(
-              fontSize: _settings.fontSize + 2, color: Colors.black87)),
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title,
+              style: MyTextStyles.bold.copyWith(
+                  fontSize: _settings.fontSize + 2, color: Colors.black87)),
+          const SizedBox(height: 6),
+          content,
+        ],
+      ),
     );
   }
 
@@ -240,16 +247,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
           subtitle: 'Adjust speaking speed',
           value: _settings.speechRate,
           settings: _settings,
-          onChanged: (v) =>
-              _updateSetting((s) => s.copyWith(speechRate: v)),
+          onChanged: (v) => _updateSetting((s) => s.copyWith(speechRate: v)),
         ),
         SliderSettingWidget(
           title: 'Speech Volume',
           subtitle: 'Adjust speech volume',
           value: _settings.speechVolume,
           settings: _settings,
-          onChanged: (v) =>
-              _updateSetting((s) => s.copyWith(speechVolume: v)),
+          onChanged: (v) => _updateSetting((s) => s.copyWith(speechVolume: v)),
         ),
         DropdownSettingWidget(
           title: 'Language',
@@ -273,14 +278,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               _updateSetting((s) => s.copyWith(confidenceThreshold: v)),
         ),
         SwitchSettingWidget(
-          title: 'Distance Proximity Alerts',
-          subtitle: 'Alerts when object is near',
-          value: _settings.distanceAlerts,
-          settings: _settings,
-          onChanged: (v) =>
-              _updateSetting((s) => s.copyWith(distanceAlerts: v)),
-        ),
-        SwitchSettingWidget(
           title: 'Direction Feedback',
           subtitle: 'Announces detected object direction (left/right)',
           value: _settings.directionMode,
@@ -296,8 +293,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           subtitle: 'Adjust text size',
           value: (_settings.fontSize - 12) / 24,
           settings: _settings,
-          onChanged: (v) => _updateSetting(
-              (s) => s.copyWith(fontSize: 12 + (v * 24))),
+          onChanged: (v) =>
+              _updateSetting((s) => s.copyWith(fontSize: 12 + (v * 24))),
         ),
       ]);
 
@@ -307,16 +304,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           subtitle: 'Yellow background for low vision users',
           value: _settings.switchMode,
           settings: _settings,
-          onChanged: (v) =>
-              _updateSetting((s) => s.copyWith(switchMode: v)),
+          onChanged: (v) => _updateSetting((s) => s.copyWith(switchMode: v)),
         ),
       ]);
 }
 
 class _NoGlow extends ScrollBehavior {
   const _NoGlow();
-  
+
+
   Widget buildViewportChrome(
-          BuildContext context, Widget child, AxisDirection axisDirection) =>
-      child;
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
+  }
 }

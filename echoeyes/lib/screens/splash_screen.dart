@@ -30,7 +30,7 @@ class _SplashScreenState extends State<SplashScreen>
     _loadSettings();
     _speakInstructions();
   }
-
+  /// ANIMATION FOR SMOOTH TRANSITION 
   void _initializeAnimations() {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
@@ -155,7 +155,8 @@ class _SplashScreenState extends State<SplashScreen>
                               'echoeyes',
                               style: const TextStyle(
                                 fontFamily: 'Quattrocento',
-                                fontSize: 32,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 36,
                                 color: Color(0xFF8DA0A8),
                                 letterSpacing: 1.2,
                               ),
@@ -163,14 +164,13 @@ class _SplashScreenState extends State<SplashScreen>
                             const SizedBox(height: 12),
                             Text(
                               'Object Detection and Recognition Application for Visually Impaired',
-                              style: MyTextStyles.medium.copyWith(
+                              style: MyTextStyles.semiBold.copyWith(
                                 fontSize: 16,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.w400,
+                                color: Colors.white,
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 48),
+                            const SizedBox(height: 50),
                             _buildButton(width, 'Camera', _openCamera),
                             const SizedBox(height: 20),
                             _buildButton(width, 'Settings', _openSettings),
@@ -207,7 +207,7 @@ class _SplashScreenState extends State<SplashScreen>
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: Text(label, style: MyTextStyles.medium.copyWith(fontSize: 20)),
+        child: Text(label, style: MyTextStyles.semiBold.copyWith(fontSize: 20)),
       ),
     );
   }
