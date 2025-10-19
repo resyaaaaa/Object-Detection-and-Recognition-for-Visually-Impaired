@@ -5,7 +5,6 @@ class AppSettings {
   bool switchMode;
   double confidenceThreshold;
   double fontSize;
-  bool distanceAlerts;
   bool directionMode;
 
   AppSettings({
@@ -15,7 +14,6 @@ class AppSettings {
     this.switchMode = false,
     this.confidenceThreshold = 0.5,
     this.fontSize = 14.0,
-    this.distanceAlerts = true,
     this.directionMode = false,
   });
 
@@ -26,7 +24,6 @@ class AppSettings {
     bool? switchMode,
     double? confidenceThreshold,
     double? fontSize,
-    bool? distanceAlerts,
     bool? directionMode,
   }) {
     return AppSettings(
@@ -36,7 +33,6 @@ class AppSettings {
       switchMode: switchMode ?? this.switchMode,
       confidenceThreshold: confidenceThreshold ?? this.confidenceThreshold,
       fontSize: fontSize ?? this.fontSize,
-      distanceAlerts: distanceAlerts ?? this.distanceAlerts,
       directionMode: directionMode ?? this.directionMode,
     );
   }
@@ -48,7 +44,6 @@ class AppSettings {
     'switchMode': switchMode,
     'confidenceThreshold': confidenceThreshold,
     'fontSize': fontSize,
-    'distanceAlerts': distanceAlerts,
     'directionMode' : directionMode,
   };
 
@@ -61,7 +56,6 @@ class AppSettings {
       confidenceThreshold:
           (json['confidenceThreshold'] as num?)?.toDouble() ?? 0.5,
       fontSize: (json['fontSize'] as num?)?.toDouble() ?? 14.0,
-      distanceAlerts: json['distanceAlerts'] as bool? ?? true,
       directionMode: json['directionMode'] as bool? ?? false,
     );
   }

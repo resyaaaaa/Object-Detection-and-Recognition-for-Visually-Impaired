@@ -8,7 +8,6 @@ class SettingsService {
   static const _keySwitchMode = 'switchMode';
   static const _keyConfidenceThreshold = 'confidenceThreshold';
   static const _keyFontSize = 'fontSize';
-  static const _keyDistanceAlerts = 'distanceAlerts';
   static const _keyDirectionMode = 'directionMode';
 
   static Future<void> saveSettings(AppSettings settings) async {
@@ -20,7 +19,6 @@ class SettingsService {
     await prefs.setBool(_keySwitchMode, settings.switchMode);
     await prefs.setDouble(_keyConfidenceThreshold, settings.confidenceThreshold);
     await prefs.setDouble(_keyFontSize, settings.fontSize);
-    await prefs.setBool(_keyDistanceAlerts, settings.distanceAlerts);
     await prefs.setBool(_keyDirectionMode, settings.directionMode);
   }
 
@@ -34,7 +32,6 @@ class SettingsService {
       switchMode: prefs.getBool(_keySwitchMode) ?? false,
       confidenceThreshold: prefs.getDouble(_keyConfidenceThreshold) ?? 0.5,
       fontSize: prefs.getDouble(_keyFontSize) ?? 14.0,
-      distanceAlerts: prefs.getBool(_keyDistanceAlerts) ?? true,
       directionMode: prefs.getBool(_keyDirectionMode) ?? false,
     );
   }

@@ -21,9 +21,13 @@ class DropdownSettingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = settings.switchMode;
+    final bgColor = isDark ? const Color(0xFFFFD900) : Colors.white;
+    final borderColor = isDark ? Colors.black : Colors.grey[400]!;
+
     return Card(
-      color: settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
-      elevation: settings.switchMode ? 0 : 2,
+      color: bgColor,
+      elevation: isDark ? 0 : 2,
       margin: const EdgeInsets.only(bottom: 16),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -38,12 +42,13 @@ class DropdownSettingWidget extends StatelessWidget {
                 color: Colors.black,
               ),
             ),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               style: TextStyle(
                 fontSize: settings.fontSize - 2,
-                color: Colors.black87,
                 fontWeight: FontWeight.w600,
+                color: Colors.black87,
               ),
             ),
             const SizedBox(height: 12),
@@ -51,22 +56,20 @@ class DropdownSettingWidget extends StatelessWidget {
               value: value,
               onChanged: onChanged,
               isExpanded: true,
-              dropdownColor: settings.switchMode
-                  ? const Color(0xFFFFD900)
-                  : Colors.white,
+              dropdownColor: bgColor,
               style: TextStyle(
-                color: Colors.black,
                 fontSize: settings.fontSize,
                 fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
               decoration: InputDecoration(
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[400]!),
+                  borderSide: BorderSide(color: borderColor),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: Colors.grey[400]!),
+                  borderSide: BorderSide(color: borderColor),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),

@@ -39,7 +39,7 @@ dependencies:
   shared_preferences: ^2.2.3
 
   #TEST
-  connectivity_plus: ^6.1.5
+  connectivity_plus: ^7.0.0
   http: ^1.5.0
   audioplayers: ^6.5.1
 
@@ -47,16 +47,19 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_icons:
+  android: true
+  image_path: "assets/icons/echoeyes_logo.png"
+  adaptive_icon_background: "#95DEFD"
+  adaptive_icon_foreground: "assets/icons/echoeyes_logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -73,6 +76,7 @@ flutter:
     - assets/labels/pedestrian12.txt
     - assets/yolov8n.tflite
     - assets/images/echoeyes_logo.png
+    - assets/icons/echoeyes_logo.png
 
 
   fonts:
@@ -90,6 +94,8 @@ flutter:
       - family: Quattrocento
         fonts:
             - asset: assets/fonts/Quattrocento-Regular.ttf
+            - asset: assets/fonts/Quattrocento-Bold.ttf
+              weight: 700
 
 
   # To add assets to your application, add an assets section, like this:
