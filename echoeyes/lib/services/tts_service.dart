@@ -32,9 +32,9 @@ class TTSService {
         _spokenLabels.add(text);
         _lastSpoken = now;
 
-        ///TEST native tts first
+        //TEST NATIVE TTS FIRST
         var result = await _flutterTts.speak(text);
-        if(result == 1) {
+        if (result == 1) {
           return;
         } else {
           await _tryGtts(text);
@@ -46,37 +46,43 @@ class TTSService {
     }
   }
 
+  // CHECK INTERNET TRY GTTS IF ONLINE
   static Future<void> _tryGtts(String text) async {
     final connectivityResult = await Connectivity().checkConnectivity();
 
-    if (connectivityResult == ConnectivityResult.none){
+    if (connectivityResult == ConnectivityResult.none) {
       debugPrint("No internet connection.");
       return;
     }
     await _speakWithGtts(text);
-    
   }
 
   static Future<void> _speakWithGtts(String text) async {
     try {
-      final lang = _settings.language.split('-').first;
-      final url = Uri.parse(
-          "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(text)}&tl=$lang&client=tw-ob");
+     String lang = _settings.language.toLowerCase();
 
-          final response = await http.get(url);
-          if (response.statusCode == 200) {
-            final dir = await getTemporaryDirectory();
-            final file = File("${dir.path}/tts.mp3");
-            await file.writeAsBytes(response.bodyBytes);
-            await _audioPlayer.play(DeviceFileSource(file.path));
-            } else {
-              debugPrint("google Text-To-Sppeech request failed: ${response.statusCode}");
-            }
-            } catch (e) {
-              debugPrint("google Text-To-Speech Fallback error: $e");
-            }
+     if (lang.startsWith('ms')) lang = 'ms-my';
+     if (lang.startsWith('zh')) lang = 'zh-cn';
+
+      final url = Uri.parse(
+        "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(text)}&tl=$lang&client=tw-ob",
+      );
+
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final dir = await getTemporaryDirectory();
+        final file = File("${dir.path}/tts.mp3");
+        await file.writeAsBytes(response.bodyBytes);
+        await _audioPlayer.play(DeviceFileSource(file.path));
+      } else {
+        debugPrint(
+          "google Text-To-Sppeech request failed: ${response.statusCode}",
+        );
+      }
+    } catch (e) {
+      debugPrint("google Text-To-Speech Fallback error: $e");
     }
-  
+  }
 
   static Future<void> updateSettings(AppSettings settings) async {
     _settings = settings;

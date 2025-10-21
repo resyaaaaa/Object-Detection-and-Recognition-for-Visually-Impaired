@@ -26,8 +26,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     'en-GB': 'English (UK)',
     'fr-FR': 'French',
     'de-DE': 'German',
-    'hi-IN': 'Hindi (India)',
-    'id-ID': 'Indonesian',
     'ms-MY': 'Malay',
     'zh-CN': 'Mandarin (Simplified)',
   };
@@ -87,20 +85,33 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor:
-            _settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
-        title: Text('Error',
-            style: MyTextStyles.bold.copyWith(
-                fontSize: _settings.fontSize + 2, color: Colors.black)),
-        content: Text(error,
-            style: MyTextStyles.medium
-                .copyWith(fontSize: _settings.fontSize, color: Colors.black)),
+        backgroundColor: _settings.switchMode
+            ? const Color(0xFFFFD900)
+            : Colors.white,
+        title: Text(
+          'Error',
+          style: MyTextStyles.bold.copyWith(
+            fontSize: _settings.fontSize + 2,
+            color: Colors.black,
+          ),
+        ),
+        content: Text(
+          error,
+          style: MyTextStyles.medium.copyWith(
+            fontSize: _settings.fontSize,
+            color: Colors.black,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('OK',
-                style: MyTextStyles.bold
-                    .copyWith(fontSize: _settings.fontSize, color: Colors.black)),
+            child: Text(
+              'OK',
+              style: MyTextStyles.bold.copyWith(
+                fontSize: _settings.fontSize,
+                color: Colors.black,
+              ),
+            ),
           ),
         ],
       ),
@@ -111,26 +122,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final save = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor:
-            _settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
-        title: Text('Unsaved Changes',
-            style: MyTextStyles.bold.copyWith(
-                fontSize: _settings.fontSize + 2, color: Colors.black)),
-        content: Text('Do you want to save your changes before leaving?',
-            style: MyTextStyles.medium
-                .copyWith(fontSize: _settings.fontSize, color: Colors.black)),
+        backgroundColor: _settings.switchMode
+            ? const Color(0xFFFFD900)
+            : Colors.white,
+        title: Text(
+          'Unsaved Changes',
+          style: MyTextStyles.bold.copyWith(
+            fontSize: _settings.fontSize + 2,
+            color: Colors.black,
+          ),
+        ),
+        content: Text(
+          'Do you want to save your changes before leaving?',
+          style: MyTextStyles.medium.copyWith(
+            fontSize: _settings.fontSize,
+            color: Colors.black,
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Discard',
-                style: MyTextStyles.bold
-                    .copyWith(fontSize: _settings.fontSize, color: Colors.red)),
+            child: Text(
+              'Discard',
+              style: MyTextStyles.bold.copyWith(
+                fontSize: _settings.fontSize,
+                color: Colors.red,
+              ),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text('Save',
-                style: MyTextStyles.bold
-                    .copyWith(fontSize: _settings.fontSize, color: Colors.black)),
+            child: Text(
+              'Save',
+              style: MyTextStyles.bold.copyWith(
+                fontSize: _settings.fontSize,
+                color: Colors.black,
+              ),
+            ),
           ),
         ],
       ),
@@ -146,8 +174,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        backgroundColor:
-            widget.settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
+        backgroundColor: widget.settings.switchMode
+            ? const Color(0xFFFFD900)
+            : Colors.white,
         body: const Center(
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation(Colors.black),
@@ -165,8 +194,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor:
-            _settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
+        backgroundColor: _settings.switchMode
+            ? const Color(0xFFFFD900)
+            : Colors.white,
         appBar: _buildAppBar(),
         body: ScrollConfiguration(
           behavior: const _NoGlow(),
@@ -190,11 +220,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      title: Text('Settings',
-          style: MyTextStyles.bold
-              .copyWith(color: Colors.black, fontSize: _settings.fontSize + 4)),
-      backgroundColor:
-          _settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
+      title: Text(
+        'Settings',
+        style: MyTextStyles.bold.copyWith(
+          color: Colors.black,
+          fontSize: _settings.fontSize + 4,
+        ),
+      ),
+      backgroundColor: _settings.switchMode
+          ? const Color(0xFFFFD900)
+          : Colors.white,
       iconTheme: const IconThemeData(color: Colors.black),
       elevation: 0,
       actions: [
@@ -214,8 +249,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 : Text(
                     'Save',
                     style: MyTextStyles.bold.copyWith(
-                      color:
-                          (_hasChanges && !_isSaving) ? Colors.black : Colors.grey,
+                      color: (_hasChanges && !_isSaving)
+                          ? Colors.black
+                          : Colors.grey,
                       fontSize: _settings.fontSize,
                     ),
                   ),
@@ -231,9 +267,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: MyTextStyles.bold.copyWith(
-                  fontSize: _settings.fontSize + 2, color: Colors.black87)),
+          Text(
+            title,
+            style: MyTextStyles.bold.copyWith(
+              fontSize: _settings.fontSize + 2,
+              color: Colors.black87,
+            ),
+          ),
           const SizedBox(height: 6),
           content,
         ],
@@ -241,80 +281,89 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  Widget _buildAudioSettings() => Column(children: [
-        SliderSettingWidget(
-          title: 'Speech Rate',
-          subtitle: 'Adjust speaking speed',
-          value: _settings.speechRate,
-          settings: _settings,
-          onChanged: (v) => _updateSetting((s) => s.copyWith(speechRate: v)),
-        ),
-        SliderSettingWidget(
-          title: 'Speech Volume',
-          subtitle: 'Adjust speech volume',
-          value: _settings.speechVolume,
-          settings: _settings,
-          onChanged: (v) => _updateSetting((s) => s.copyWith(speechVolume: v)),
-        ),
-        DropdownSettingWidget(
-          title: 'Language',
-          subtitle: 'Select speech language',
-          value: _settings.language,
-          settings: _settings,
-          options: _languageOptions,
-          onChanged: (v) {
-            if (v != null) _updateSetting((s) => s.copyWith(language: v));
-          },
-        ),
-      ]);
+  Widget _buildAudioSettings() => Column(
+    children: [
+      SliderSettingWidget(
+        title: 'Speech Rate',
+        subtitle: 'Adjust speaking speed',
+        value: _settings.speechRate,
+        settings: _settings,
+        onChanged: (v) => _updateSetting((s) => s.copyWith(speechRate: v)),
+      ),
+      SliderSettingWidget(
+        title: 'Speech Volume',
+        subtitle: 'Adjust speech volume',
+        value: _settings.speechVolume,
+        settings: _settings,
+        onChanged: (v) => _updateSetting((s) => s.copyWith(speechVolume: v)),
+      ),
+      DropdownSettingWidget(
+        title: 'Language',
+        subtitle: 'Select speech language',
+        value: _settings.language,
+        settings: _settings,
+        options: _languageOptions,
+        onChanged: (v) {
+          if (v != null) _updateSetting((s) => s.copyWith(language: v));
+        },
+      ),
+    ],
+  );
 
-  Widget _buildDetectionSettings() => Column(children: [
-        SliderSettingWidget(
-          title: 'Confidence Threshold / Object Sensitivity',
-          subtitle: 'Higher values = better accuracy, fewer detections',
-          value: _settings.confidenceThreshold,
-          settings: _settings,
-          onChanged: (v) =>
-              _updateSetting((s) => s.copyWith(confidenceThreshold: v)),
-        ),
-        SwitchSettingWidget(
-          title: 'Direction Feedback',
-          subtitle: 'Announces detected object direction (left/right)',
-          value: _settings.directionMode,
-          settings: _settings,
-          onChanged: (v) =>
-              _updateSetting((s) => s.copyWith(directionMode: v)),
-        ),
-      ]);
+  Widget _buildDetectionSettings() => Column(
+    children: [
+      SliderSettingWidget(
+        title: 'Confidence Threshold / Object Sensitivity',
+        subtitle: 'Higher values = better accuracy, fewer detections',
+        value: _settings.confidenceThreshold,
+        settings: _settings,
+        onChanged: (v) =>
+            _updateSetting((s) => s.copyWith(confidenceThreshold: v)),
+      ),
+      SwitchSettingWidget(
+        title: 'Direction Feedback',
+        subtitle: 'Alerts direction of the detected object',
+        value: _settings.directionMode,
+        settings: _settings,
+        onChanged: (v) => _updateSetting((s) => s.copyWith(directionMode: v)),
+      ),
+    ],
+  );
 
-  Widget _buildDisplaySettings() => Column(children: [
-        SliderSettingWidget(
-          title: 'Font Size',
-          subtitle: 'Adjust text size',
-          value: (_settings.fontSize - 12) / 24,
-          settings: _settings,
-          onChanged: (v) =>
-              _updateSetting((s) => s.copyWith(fontSize: 12 + (v * 24))),
-        ),
-      ]);
+  Widget _buildDisplaySettings() => Column(
+    children: [
+      SliderSettingWidget(
+        title: 'Font Size',
+        subtitle: 'Adjust text size',
+        value: (_settings.fontSize - 12) / 24,
+        settings: _settings,
+        onChanged: (v) =>
+            _updateSetting((s) => s.copyWith(fontSize: 12 + (v * 24))),
+      ),
+    ],
+  );
 
-  Widget _buildAccessibilitySettings() => Column(children: [
-        SwitchSettingWidget(
-          title: 'High Contrast Mode',
-          subtitle: 'Yellow background for low vision users',
-          value: _settings.switchMode,
-          settings: _settings,
-          onChanged: (v) => _updateSetting((s) => s.copyWith(switchMode: v)),
-        ),
-      ]);
+  Widget _buildAccessibilitySettings() => Column(
+    children: [
+      SwitchSettingWidget(
+        title: 'High Contrast Mode',
+        subtitle: 'Yellow background for low vision users',
+        value: _settings.switchMode,
+        settings: _settings,
+        onChanged: (v) => _updateSetting((s) => s.copyWith(switchMode: v)),
+      ),
+    ],
+  );
 }
 
 class _NoGlow extends ScrollBehavior {
   const _NoGlow();
 
-
   Widget buildViewportChrome(
-      BuildContext context, Widget child, AxisDirection axisDirection) {
+    BuildContext context,
+    Widget child,
+    AxisDirection axisDirection,
+  ) {
     return child;
   }
 }
