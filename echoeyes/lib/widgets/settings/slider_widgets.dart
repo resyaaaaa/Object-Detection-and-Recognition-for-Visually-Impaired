@@ -77,7 +77,7 @@ class SliderSettingWidget extends StatelessWidget {
   String _getDisplayValue() {
     if (title == 'Font Size') {
       return '${(12 + (value * 24)).toInt()}px';
-    } else if (title == 'Confidence Threshold'){
+    } else if (title == 'Confidence Threshold') {
       return value.toStringAsFixed(2);
     }
     return '${(value * 100).toInt()}%';

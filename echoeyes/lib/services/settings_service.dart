@@ -17,7 +17,10 @@ class SettingsService {
     await prefs.setString(_keyLanguage, settings.language);
     await prefs.setDouble(_keySpeechVolume, settings.speechVolume);
     await prefs.setBool(_keySwitchMode, settings.switchMode);
-    await prefs.setDouble(_keyConfidenceThreshold, settings.confidenceThreshold);
+    await prefs.setDouble(
+      _keyConfidenceThreshold,
+      settings.confidenceThreshold,
+    );
     await prefs.setDouble(_keyFontSize, settings.fontSize);
     await prefs.setBool(_keyDirectionMode, settings.directionMode);
   }

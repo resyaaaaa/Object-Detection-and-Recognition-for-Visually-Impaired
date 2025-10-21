@@ -143,7 +143,7 @@ class _YoloCamState extends State<YoloCam> {
           ),
           ...displayBoxesAroundRecognizedObjects(MediaQuery.of(context).size),
 
-          // BAR, BUTTON @BOTTOM
+          // NAVBAR, BUTTON @BOTTOM
           Positioned(
             bottom: 0,
             width: MediaQuery.of(context).size.width,
@@ -166,7 +166,7 @@ class _YoloCamState extends State<YoloCam> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Flash button
+                  // FLASHLIGHT BUTTON
                   GestureDetector(
                     onTap: () async {
                       if (_currentFlashMode == FlashMode.off) {
@@ -187,7 +187,7 @@ class _YoloCamState extends State<YoloCam> {
                     ),
                   ),
 
-                  // Detection start/stop
+                  // TTS & GESTURE FEEDBACK FOR DETECTION STOP & START
                   GestureDetector(
                     onTap: () async {
                       if (isDetecting) {
@@ -226,7 +226,7 @@ class _YoloCamState extends State<YoloCam> {
                     ),
                   ),
 
-                  // Settings button
+                  // SETTINGS BUTTON
                   GestureDetector(
                     onTap: () async {
                       await Navigator.push(
@@ -236,7 +236,7 @@ class _YoloCamState extends State<YoloCam> {
                         ),
                       );
 
-                      /// RELOADING THE SETTINGS
+                      /// RELOAD (GET THE UPDATED SETTINGS)
                       final updatedSettings =
                           await SettingsService.loadSettings();
                       setState(() {
@@ -296,7 +296,7 @@ class _YoloCamState extends State<YoloCam> {
         final double confidence = box[4].toDouble();
         if (confidence < widget.settings.confidenceThreshold) continue;
 
-        // OBJECT DIRECTION -> LEFT, RIGHT, IN FRONT
+        // TTS FOR DIRECTIONAL MODE -> LEFT, RIGHT, IN FRONT
         if (!spokenLabels.contains(label)) {
           spokenLabels.add(label);
           _lastSpokenTime = now;
@@ -304,7 +304,7 @@ class _YoloCamState extends State<YoloCam> {
 
           if (_settings.directionMode) {
             final direction = _getObjectDirection(box, cameraImage);
-            await flutterTts.speak("$label is detected on the $direction");
+            await flutterTts.speak("$label is detected $direction");
           } else {
             await flutterTts.speak("$label is detected");
           }
@@ -317,6 +317,7 @@ class _YoloCamState extends State<YoloCam> {
       (label) => now.difference(_lastSpokenTime).inSeconds > 4,
     );
 
+    // TTS DELAY DURATION
     setState(() {
       yoloResults = result;
     });
@@ -342,6 +343,7 @@ class _YoloCamState extends State<YoloCam> {
     });
   }
 
+  // DRAWING BOUNDING BOXES
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
     if (yoloResults.isEmpty) return [];
 
@@ -377,21 +379,21 @@ class _YoloCamState extends State<YoloCam> {
     }).toList();
   }
 
-  /// Circle logic for direction mode
+  /// LOGIC FOR DIRECTIONAL MODE
   String _getObjectDirection(List<dynamic> box, CameraImage cameraImage) {
     final double centerX = (box[0] + box[2]) / 2;
     final double frameCenter = cameraImage.width / 2;
 
-    // Define regions: left (0–40%), center (40–60%), right (60–100%)
-    final double leftBoundary = frameCenter * 0.8;
-    final double rightBoundary = frameCenter * 1.2;
+    // DEFINE REGION: left, right and center
+    final double leftBoundary = frameCenter * 0.9;
+    final double rightBoundary = frameCenter * 1.1;
 
     if (centerX < leftBoundary) {
-      return "left";
+      return "on the left";
     } else if (centerX > rightBoundary) {
-      return "right";
+      return "on the right";
     } else {
-      return "in front";
+      return "ahead";
     }
   }
 }
