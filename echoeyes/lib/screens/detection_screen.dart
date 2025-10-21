@@ -152,8 +152,8 @@ class _YoloCamState extends State<YoloCam> {
               decoration: const BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
+                  topLeft: Radius.zero,
+                  topRight: Radius.zero,
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -182,7 +182,7 @@ class _YoloCamState extends State<YoloCam> {
                     child: _circleButton(
                       icon: Icons.flash_on,
                       color: _currentFlashMode == FlashMode.torch
-                          ? Colors.yellow
+                          ? const Color.fromARGB(255, 247, 195, 5)
                           : Colors.black,
                     ),
                   ),
@@ -242,8 +242,6 @@ class _YoloCamState extends State<YoloCam> {
                       setState(() {
                         _settings = updatedSettings;
                       });
-
-                      await TTSService.speak("Settings");
                     },
                     child: _circleButton(
                       icon: Icons.settings,
@@ -385,8 +383,8 @@ class _YoloCamState extends State<YoloCam> {
     final double frameCenter = cameraImage.width / 2;
 
     // DEFINE REGION: left, right and center
-    final double leftBoundary = frameCenter * 0.9;
-    final double rightBoundary = frameCenter * 1.1;
+    final double leftBoundary = frameCenter * 0.5;
+    final double rightBoundary = frameCenter * 1.5;
 
     if (centerX < leftBoundary) {
       return "on the left";

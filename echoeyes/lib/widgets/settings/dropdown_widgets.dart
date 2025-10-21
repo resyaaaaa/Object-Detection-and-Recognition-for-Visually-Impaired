@@ -1,3 +1,4 @@
+import 'package:echoeyes/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:echoeyes/models/settings_model.dart';
 
@@ -21,81 +22,64 @@ class DropdownSettingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = settings.switchMode;
-    final bgColor = isDark ? const Color(0xFFFFD900) : Colors.white;
-    final borderColor = isDark ? Colors.black : Colors.grey[400]!;
+    final borderColor = Colors.grey[200]!;
 
-    return Card(
-      color: bgColor,
-      elevation: isDark ? 0 : 2,
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: settings.fontSize + 2,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: MyTextStyles.semiBold.copyWith(
+              fontSize: settings.fontSize + 2,
+              color: Colors.black,
             ),
-            const SizedBox(height: 4),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: settings.fontSize - 2,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: MyTextStyles.medium.copyWith(
+              fontSize: settings.fontSize - 2,
+              color: Colors.black87,
             ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<String>(
-              value: value,
-              onChanged: onChanged,
-              isExpanded: true,
-              dropdownColor: bgColor,
-              style: TextStyle(
-                fontSize: settings.fontSize,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
+          ),
+          const SizedBox(height: 10),
+          DropdownButtonFormField<String>(
+            value: value,
+            onChanged: onChanged,
+            isExpanded: true,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: borderColor),
               ),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.black),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: borderColor),
               ),
-              items: options.entries.map((entry) {
-                return DropdownMenuItem<String>(
-                  value: entry.key,
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      fontSize: settings.fontSize,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+              focusedBorder: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                borderSide: BorderSide(color: Colors.black),
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            dropdownColor: Colors.white,
+            style: MyTextStyles.semiBold.copyWith(
+              fontSize: settings.fontSize,
+              color: Colors.black,
+            ),
+            items: options.entries
+                .map(
+                  (entry) => DropdownMenuItem<String>(
+                    value: entry.key,
+                    child: Text(entry.value),
                   ),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
+                )
+                .toList(),
+          ),
+        ],
       ),
     );
   }

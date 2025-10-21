@@ -13,7 +13,7 @@ class AppSettings {
     this.speechVolume = 1.0,
     this.switchMode = false,
     this.confidenceThreshold = 0.5,
-    this.fontSize = 14.0,
+    this.fontSize = 13.0,
     this.directionMode = false,
   });
 
@@ -55,7 +55,7 @@ class AppSettings {
       switchMode: json['switchMode'] as bool? ?? false,
       confidenceThreshold:
           (json['confidenceThreshold'] as num?)?.toDouble() ?? 0.5,
-      fontSize: (json['fontSize'] as num?)?.toDouble() ?? 14.0,
+      fontSize: (json['fontSize'] as num?)?.toDouble() ?? 13.0,
       directionMode: json['directionMode'] as bool? ?? false,
     );
   }
