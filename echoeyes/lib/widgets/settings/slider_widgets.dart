@@ -1,3 +1,4 @@
+import 'package:echoeyes/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:echoeyes/models/settings_model.dart';
 
@@ -19,67 +20,57 @@ class SliderSettingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: settings.switchMode ? const Color(0xFFFFD900) : Colors.white,
-      elevation: settings.switchMode ? 0 : 2,
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: settings.fontSize + 2,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: MyTextStyles.semiBold.copyWith(
+              fontSize: settings.fontSize + 2,
+              color: Colors.black,
             ),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: settings.fontSize - 2,
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: MyTextStyles.medium.copyWith(
+              fontSize: settings.fontSize - 2,
+              color: Colors.black87,
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      activeTrackColor: Colors.black,
-                      inactiveTrackColor: Colors.grey[400],
-                      thumbColor: Colors.black,
-                      overlayColor: Colors.black.withValues(alpha: 0.2),
-                    ),
-                    child: Slider(value: value, onChanged: onChanged),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    activeTrackColor: Colors.black,
+                    inactiveTrackColor: Colors.grey[200],
+                    thumbColor: Colors.black,
+                    overlayColor: Colors.black.withValues(alpha: 0.2),
                   ),
+                  child: Slider(value: value, onChanged: onChanged),
                 ),
-                Text(
-                  _getDisplayValue(),
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: settings.fontSize,
-                    fontWeight: FontWeight.bold,
-                  ),
+              ),
+              Text(
+                _getDisplayValue(),
+                style: MyTextStyles.medium.copyWith(
+                  color: Colors.black,
+                  fontSize: settings.fontSize,
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
   String _getDisplayValue() {
-    if (title == 'Font Size') {
-      return '${(12 + (value * 24)).toInt()}px';
-    } else if (title == 'Confidence Threshold') {
-      return value.toStringAsFixed(2);
-    }
+    if (title == 'Font Size') return '${(12 + (value * 24)).toInt()}px';
+    if (title.contains('Confidence')) return value.toStringAsFixed(2);
     return '${(value * 100).toInt()}%';
   }
 }

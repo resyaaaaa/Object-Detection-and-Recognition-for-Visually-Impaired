@@ -86,8 +86,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: _settings.switchMode
-            ? const Color(0xFFFFD900)
-            : Colors.white,
+            ? Colors.amberAccent[700]
+            : const Color.fromARGB(255, 217, 235, 244),
         title: Text(
           'Error',
           style: MyTextStyles.bold.copyWith(
@@ -123,8 +123,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: _settings.switchMode
-            ? const Color(0xFFFFD900)
-            : Colors.white,
+            ? Colors.amberAccent[700]
+            : const Color.fromARGB(255, 217, 235, 244),
         title: Text(
           'Unsaved Changes',
           style: MyTextStyles.bold.copyWith(
@@ -175,8 +175,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (_isLoading) {
       return Scaffold(
         backgroundColor: widget.settings.switchMode
-            ? const Color(0xFFFFD900)
-            : Colors.white,
+            ? Colors.amberAccent[700]
+            : const Color.fromARGB(255, 217, 235, 244),
         body: const Center(
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation(Colors.black),
@@ -194,9 +194,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         }
       },
       child: Scaffold(
+        // CHANGE BACKGROUND ==>
         backgroundColor: _settings.switchMode
-            ? const Color(0xFFFFD900)
-            : Colors.white,
+            ? Colors.amberAccent[700]
+            : const Color.fromARGB(255, 217, 235, 244),
         appBar: _buildAppBar(),
         body: ScrollConfiguration(
           behavior: const _NoGlow(),
@@ -219,6 +220,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   PreferredSizeWidget _buildAppBar() {
+    // APPBAR ==>
     return AppBar(
       title: Text(
         'Settings',
@@ -228,8 +230,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
       backgroundColor: _settings.switchMode
-          ? const Color(0xFFFFD900)
-          : Colors.white,
+          ? Colors.amberAccent[700]
+          : const Color.fromARGB(255, 217, 235, 244),
       iconTheme: const IconThemeData(color: Colors.black),
       elevation: 0,
       actions: [
@@ -252,7 +254,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       color: (_hasChanges && !_isSaving)
                           ? Colors.black
                           : Colors.grey,
-                      fontSize: _settings.fontSize,
+                      fontSize: _settings.fontSize + 4,
                     ),
                   ),
           ),
@@ -262,21 +264,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSection(String title, Widget content) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: MyTextStyles.bold.copyWith(
-              fontSize: _settings.fontSize + 2,
-              color: Colors.black87,
+    final highContrastMode = _settings.switchMode;
+
+    return Card(
+      color: highContrastMode
+          ? Colors.amberAccent[700]
+          : Colors.white,
+      elevation: 0,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: MyTextStyles.bold.copyWith(
+                fontSize: _settings.fontSize + 2,
+                color: Colors.black87,
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          content,
-        ],
+
+            const SizedBox(height: 12),
+            content,
+          ],
+        ),
       ),
     );
   }
@@ -290,6 +303,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         settings: _settings,
         onChanged: (v) => _updateSetting((s) => s.copyWith(speechRate: v)),
       ),
+      const Divider(),
       SliderSettingWidget(
         title: 'Speech Volume',
         subtitle: 'Adjust speech volume',
@@ -297,6 +311,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         settings: _settings,
         onChanged: (v) => _updateSetting((s) => s.copyWith(speechVolume: v)),
       ),
+      const Divider(),
       DropdownSettingWidget(
         title: 'Language',
         subtitle: 'Select speech language',
@@ -320,6 +335,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onChanged: (v) =>
             _updateSetting((s) => s.copyWith(confidenceThreshold: v)),
       ),
+      const Divider(),
       SwitchSettingWidget(
         title: 'Direction Feedback',
         subtitle: 'Alerts direction of the detected object',

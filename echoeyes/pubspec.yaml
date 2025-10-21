@@ -58,7 +58,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   image_path: "assets/icons/echoeyes_logo.png"
-  adaptive_icon_background: "#95DEFD"
+  adaptive_icon_background: "#FAF9F6"
   adaptive_icon_foreground: "assets/icons/echoeyes_logo.png"
 
 # For information on the generic Dart part of this file, see the

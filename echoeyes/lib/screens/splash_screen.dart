@@ -65,7 +65,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _speakInstructions() async {
     await Future.delayed(const Duration(milliseconds: 500));
     await TTSService.speak(
-      "Welcome to Echo Eyes. Double tap to start detection.",
+      "Double tap to start detection",
     );
   }
 
@@ -155,10 +155,10 @@ class _SplashScreenState extends State<SplashScreen>
                               'echoeyes',
                               style: const TextStyle(
                                 fontFamily: 'Quattrocento',
-                                fontWeight: FontWeight.w700,
-                                fontSize: 36,
+                                fontWeight: FontWeight.w400,
+                                fontSize: 46,
                                 color: Color(0xFF8DA0A8),
-                                letterSpacing: 1.2,
+                                letterSpacing: 1.5,
                               ),
                             ),
                             const SizedBox(height: 12),
