@@ -267,9 +267,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final highContrastMode = _settings.switchMode;
 
     return Card(
-      color: highContrastMode
-          ? Colors.amberAccent[700]
-          : Colors.white,
+      color: highContrastMode ? Colors.amberAccent[700] : Colors.white,
       elevation: 0,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

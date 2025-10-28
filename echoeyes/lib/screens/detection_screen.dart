@@ -1,3 +1,4 @@
+// APP FILES AND PACKAGES IMPORT
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:echoeyes/screens/settings_screen.dart';
 import 'package:echoeyes/services/settings_service.dart';
@@ -275,7 +276,8 @@ class _YoloCamState extends State<YoloCam> {
       child: Icon(icon, color: color, size: 30),
     );
   }
-
+  
+  // DETECTION CAMERA
   Future<void> yoloOnFrame(CameraImage cameraImage) async {
     final result = await vision.yoloOnFrame(
       bytesList: cameraImage.planes.map((plane) => plane.bytes).toList(),
@@ -341,7 +343,29 @@ class _YoloCamState extends State<YoloCam> {
     });
   }
 
-  // DRAWING BOUNDING BOXES
+  /// LOGIC FOR DIRECTIONAL MODE
+  String _getObjectDirection(List<dynamic> box, CameraImage cameraImage) {
+    final double centerX = (box[0] + box[2]) / 2.0; // Object's centerX
+    final double frameWidth = cameraImage.width
+        .toDouble(); // convert frame width to double
+    
+    final double dirSection =
+        frameWidth / 4.0; // divide frame into 4 vertical sections
+    
+    // DIRECTIOM BASED ON 4 SECTIONS
+    final double leftBoundary = dirSection; // LEFT SECTION 1/4
+    final double rightBoundary = frameWidth - dirSection; // RIGHT SECTION 4/4
+
+    if (centerX < leftBoundary) {
+      return "on the left";
+    } else if (centerX > rightBoundary) {
+      return "on the right";
+    } else {
+      return "ahead";
+    }
+  }
+
+  // BOUNDING BOXES
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
     if (yoloResults.isEmpty) return [];
 
@@ -362,12 +386,13 @@ class _YoloCamState extends State<YoloCam> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
-            border: Border.all(color: Colors.lightBlueAccent, width: 2),
+            border: Border.all(color: Colors.amber.shade700, width: 2),
           ),
           child: Text(
             "${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(1)}",
             style: MyTextStyles.semiBold.copyWith(
-              background: Paint()..color = const Color(0x800410F2),
+              background: Paint()
+                ..color = const Color.fromARGB(255, 231, 147, 1),
               color: Colors.white,
               fontSize: 16,
             ),
@@ -375,23 +400,5 @@ class _YoloCamState extends State<YoloCam> {
         ),
       );
     }).toList();
-  }
-
-  /// LOGIC FOR DIRECTIONAL MODE
-  String _getObjectDirection(List<dynamic> box, CameraImage cameraImage) {
-    final double centerX = (box[0] + box[2]) / 2;
-    final double frameCenter = cameraImage.width / 2;
-
-    // DEFINE REGION: left, right and center
-    final double leftBoundary = frameCenter * 0.5;
-    final double rightBoundary = frameCenter * 1.5;
-
-    if (centerX < leftBoundary) {
-      return "on the left";
-    } else if (centerX > rightBoundary) {
-      return "on the right";
-    } else {
-      return "ahead";
-    }
   }
 }
