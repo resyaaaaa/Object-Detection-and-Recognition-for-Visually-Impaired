@@ -57,12 +57,11 @@ dev_dependencies:
 
 flutter_icons:
   android: true
-  image_path: "assets/icons/echoeyes_logo.png"
-  adaptive_icon_background: "#FAF9F6"
-  adaptive_icon_foreground: "assets/icons/echoeyes_logo.png"
+  image_path: "assets/icons/echoeyes_icon.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/icons/echoeyes_icon.png"
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
+
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -77,6 +76,11 @@ flutter:
     - assets/yolov8n.tflite
     - assets/images/echoeyes_logo.png
     - assets/icons/echoeyes_logo.png
+    - assets/images/echoeyes2_logo.png
+    - assets/icons/echoeyes2_logo.png
+    - assets/icons/echoeyes_icon.png
+    - assets/icons/echoeyes_icon_tp.png
+
 
 
   fonts:
@@ -96,6 +100,10 @@ flutter:
             - asset: assets/fonts/Quattrocento-Regular.ttf
             - asset: assets/fonts/Quattrocento-Bold.ttf
               weight: 700
+      - family: Marcellus
+        fonts:
+            - asset: assets/fonts/Marcellus-Regular.ttf
+            
 
 
   # To add assets to your application, add an assets section, like this:
@@ -126,5 +134,4 @@ flutter:
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
   #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+

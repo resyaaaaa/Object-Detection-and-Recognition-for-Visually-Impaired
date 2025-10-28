@@ -132,6 +132,7 @@ class _SplashScreenState extends State<SplashScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
+                  // BACKGROUND
                   Color.fromARGB(255, 255, 255, 255),
                   Color.fromARGB(255, 149, 222, 253),
                 ],
@@ -150,27 +151,30 @@ class _SplashScreenState extends State<SplashScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _buildLogo(),
-                            const SizedBox(height: 40),
+                            const SizedBox(height: 8),
                             Text(
+                              // ECHOEYES UNDER LOGO
                               'echoeyes',
                               style: const TextStyle(
-                                fontFamily: 'Quattrocento',
+                                fontFamily: 'Marcellus',
                                 fontWeight: FontWeight.w400,
-                                fontSize: 46,
-                                color: Color(0xFF8DA0A8),
-                                letterSpacing: 1.5,
+                                fontSize: 58,
+                                color: Color(0xFFA2875B),
+                                letterSpacing: 1.0,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: 5),
                             Text(
+                              // TEXT UNDER "ECHOEYES"
                               'Object Detection and Recognition Application for Visually Impaired',
-                              style: MyTextStyles.semiBold.copyWith(
+                              style: MyTextStyles.medium.copyWith(
+                                fontWeight: FontWeight.w300,
                                 fontSize: 16,
-                                color: Colors.white,
+                                color: Color(0xFF788293),
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 50),
+                            const SizedBox(height: 68),
                             _buildButton(width, 'Camera', _openCamera),
                             const SizedBox(height: 20),
                             _buildButton(width, 'Settings', _openSettings),
@@ -190,7 +194,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   //LOGO --->
   Widget _buildLogo() {
-    return Image.asset('assets/images/echoeyes_logo.png', fit: BoxFit.contain);
+    return Image.asset('assets/images/echoeyes2_logo.png', fit: BoxFit.contain);
   }
 
   //BUTTON FOR SETTINGS&CAMERA --->
@@ -207,7 +211,7 @@ class _SplashScreenState extends State<SplashScreen>
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: Text(label, style: MyTextStyles.semiBold.copyWith(fontSize: 20)),
+        child: Text(label, style: MyTextStyles.medium.copyWith(fontSize: 16)),
       ),
     );
   }

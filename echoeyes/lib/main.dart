@@ -17,7 +17,7 @@ class EchoEyesApp extends StatelessWidget {
       home: const SplashScreen(),
       title: 'EchoEyes Object Detection',
       theme: ThemeData(
-        primaryColor: Colors.blueAccent,
+        primaryColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
       ),
     ));
