@@ -31,17 +31,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-  camera: ^0.11.1
-  flutter_vision: ^2.0.0
-  flutter_tts: ^4.2.3
-  path_provider: ^2.1.5
-  permission_handler: ^12.0.0+1
+  camera: ^0.11.1 # Camera
+  flutter_vision: ^2.0.0 # need for Detection and YOLO model 
+  flutter_tts: ^4.2.3 # TTS 
+  permission_handler: ^12.0.0+1 # handling permission for cam and audio
   shared_preferences: ^2.2.3
-
-  #TEST
-  connectivity_plus: ^7.0.0
-  http: ^1.5.0
-  audioplayers: ^6.5.1
+  flutter_spinkit: ^5.2.2 # loading animation
+  android_intent_plus: ^6.0.0 # to launch only-Android intents
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -53,8 +49,9 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^6.0.0
-  flutter_launcher_icons: ^0.14.4
+  flutter_launcher_icons: ^0.14.4 # launcher icons
 
+# launcher icons image path, etc.
 flutter_icons:
   android: true
   image_path: "assets/icons/echoeyes_icon.png"
@@ -71,6 +68,7 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+  # Assets needed for this app
   assets:
     - assets/labels/pedestrian12.txt
     - assets/yolov8n.tflite
@@ -82,7 +80,7 @@ flutter:
     - assets/icons/echoeyes_icon_tp.png
 
 
-
+  # Fonts used in this app
   fonts:
       - family: Poppins
         fonts:

@@ -1,89 +1,45 @@
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 
 class TTSService {
   static final FlutterTts _flutterTts = FlutterTts();
-  static final AudioPlayer _audioPlayer = AudioPlayer();
   static AppSettings _settings = AppSettings();
 
   static final Set<String> _spokenLabels = {};
   static DateTime _lastSpoken = DateTime.fromMillisecondsSinceEpoch(0);
 
+  // USE INITIALIZED SETTINGS FROM APPSETTINGS (SETTINGS MODEL)
   static Future<void> initialize(AppSettings settings) async {
     _settings = settings;
+
     await _flutterTts.awaitSpeakCompletion(true);
     await _flutterTts.setLanguage(_settings.language);
     await _flutterTts.setSpeechRate(_settings.speechRate);
     await _flutterTts.setVolume(_settings.speechVolume);
   }
 
+  // SPEAK AUDIO
   static Future<void> speak(String text) async {
     final now = DateTime.now();
     final timeGap = now.difference(_lastSpoken).inMilliseconds;
 
+    // SPEAK AFTER 4S HAVE PASSED (AVOID REPETITIVE SPEECH OUTPUT)
     if (!_spokenLabels.contains(text) && timeGap > 4000) {
       try {
         _spokenLabels.add(text);
         _lastSpoken = now;
 
         //TEST NATIVE TTS FIRST
-        var result = await _flutterTts.speak(text);
-        if (result == 1) {
-          return;
-        } else {
-          await _tryGtts(text);
-        }
+        await _flutterTts.speak(text);
       } catch (e) {
+        // ERROR MESSAGE
         debugPrint('Text-To-Speech Error: $e');
-        await _tryGtts(text);
       }
     }
   }
 
-  // CHECK INTERNET TRY GTTS IF ONLINE
-  static Future<void> _tryGtts(String text) async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-
-    if (connectivityResult == ConnectivityResult.none) {
-      debugPrint("No internet connection.");
-      return;
-    }
-    await _speakWithGtts(text);
-  }
-
-  static Future<void> _speakWithGtts(String text) async {
-    try {
-     String lang = _settings.language.toLowerCase();
-
-     if (lang.startsWith('ms')) lang = 'ms-my';
-     if (lang.startsWith('zh')) lang = 'zh-cn';
-
-      final url = Uri.parse(
-        "https://translate.google.com/translate_tts?ie=UTF-8&q=${Uri.encodeComponent(text)}&tl=$lang&client=tw-ob",
-      );
-
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final dir = await getTemporaryDirectory();
-        final file = File("${dir.path}/tts.mp3");
-        await file.writeAsBytes(response.bodyBytes);
-        await _audioPlayer.play(DeviceFileSource(file.path));
-      } else {
-        debugPrint(
-          "google Text-To-Sppeech request failed: ${response.statusCode}",
-        );
-      }
-    } catch (e) {
-      debugPrint("google Text-To-Speech Fallback error: $e");
-    }
-  }
-
+  // USE UPDATED SETTINGS
   static Future<void> updateSettings(AppSettings settings) async {
     _settings = settings;
     try {
@@ -91,10 +47,12 @@ class TTSService {
       await _flutterTts.setSpeechRate(_settings.speechRate);
       await _flutterTts.setVolume(_settings.speechVolume);
     } catch (e) {
+      // ERROR MESSAGE
       debugPrint('Text-To-Speech Settings Update Error: $e');
     }
   }
 
+  // CLEAR SPOKEN LABEL CACHE
   static void clearLabelCache() {
     _spokenLabels.clear();
   }

@@ -30,7 +30,8 @@ class _SplashScreenState extends State<SplashScreen>
     _loadSettings();
     _speakInstructions();
   }
-  /// ANIMATION FOR SMOOTH TRANSITION 
+
+  // ANIMATION FOR SMOOTH SPLASH TRANSITION
   void _initializeAnimations() {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
@@ -54,6 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.forward();
   }
 
+  // LOAD SAVED SETTINGS BEFORE GF'S INSTRUCTIONS
   Future<void> _loadSettings() async {
     final saved = await SettingsService.loadSettings();
     setState(() => _settings = saved);
@@ -62,13 +64,13 @@ class _SplashScreenState extends State<SplashScreen>
     _speakInstructions();
   }
 
+  // GESTURE FEEDBACK'S INSTRUCTION - TTS
   Future<void> _speakInstructions() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    await TTSService.speak(
-      "Double tap to start detection",
-    );
+    await TTSService.speak("Double tap to start detection");
   }
 
+  // CAMERA BUTTON IS CLICKED TTS
   Future<void> _openCamera() async {
     await TTSService.speak("Opening camera");
 
@@ -86,24 +88,27 @@ class _SplashScreenState extends State<SplashScreen>
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => YoloCam(camerass: cameras, settings: _settings),
+        // ROUTE TO DETECTION SCREEN
+        builder: (_) => DetectionScreen(camerass: cameras, settings: _settings),
       ),
     );
   }
 
+  // SETTINGS BUTTON IS CLICKED TTS
   Future<void> _openSettings() async {
     await TTSService.speak("Opening settings");
 
     final loaded = await SettingsService.loadSettings();
     final result = await Navigator.push(
       context,
+      // GO TO SETTINGS SCREEN
       MaterialPageRoute(builder: (_) => SettingsScreen(settings: loaded)),
     );
 
     if (result != null && mounted) {
       setState(() => _settings = result);
       await SettingsService.saveSettings(_settings);
-      await TTSService.updateSettings(_settings);
+      //await TTSService.updateSettings(_settings); //NO NEED
     }
   }
 
@@ -117,7 +122,6 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
 
-    //Here to modify the bg color for splash screen
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       //in order the button still works even adding gesture control
@@ -132,9 +136,9 @@ class _SplashScreenState extends State<SplashScreen>
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  // BACKGROUND
+                  // SPLASH SCREEN MAIN BACKGROUND
                   Color.fromARGB(255, 255, 255, 255),
-                  Color.fromARGB(255, 149, 222, 253),
+                  Color(0xFF95DEFD),
                 ],
               ),
             ),
@@ -150,6 +154,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            // SIZED BOX FOR EVERY BUTTON OR TEXT ON SPLASH SCREEN
                             _buildLogo(),
                             const SizedBox(height: 8),
                             Text(
@@ -192,12 +197,12 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  //LOGO --->
+  // LOGO IMAGE PATH
   Widget _buildLogo() {
     return Image.asset('assets/images/echoeyes2_logo.png', fit: BoxFit.contain);
   }
 
-  //BUTTON FOR SETTINGS&CAMERA --->
+  // BUTTON FOR SETTINGS AND CAMERA
   Widget _buildButton(double width, String label, VoidCallback onPressed) {
     return SizedBox(
       width: width * 0.7,

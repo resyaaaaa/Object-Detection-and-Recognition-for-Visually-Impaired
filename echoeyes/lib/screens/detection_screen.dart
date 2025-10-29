@@ -15,34 +15,20 @@ late FlutterTts flutterTts;
 
 Set<String> spokenLabels = {};
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  cameras = await availableCameras();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(body: Center(child: Text("EchoEyes starting..."))),
-    );
-  }
-}
-
-class YoloCam extends StatefulWidget {
+class DetectionScreen extends StatefulWidget {
   final AppSettings settings;
   final List<CameraDescription> camerass;
-  const YoloCam({super.key, required this.camerass, required this.settings});
+  const DetectionScreen({
+    super.key,
+    required this.camerass,
+    required this.settings,
+  });
 
   @override
-  State<YoloCam> createState() => _YoloCamState();
+  State<DetectionScreen> createState() => _DetectionScreenState();
 }
 
-class _YoloCamState extends State<YoloCam> {
+class _DetectionScreenState extends State<DetectionScreen> {
   late CameraController controller;
   late FlutterVision vision;
   late List<Map<String, dynamic>> yoloResults;
@@ -111,10 +97,7 @@ class _YoloCamState extends State<YoloCam> {
       // LOADING INDICATOR (WAITING FOR YOLO)
       return Scaffold(
         body: Center(
-          child: const SpinKitChasingDots(
-            color: Color(0xFF95DEFD), 
-            size: 50.0,
-            ),
+          child: const SpinKitChasingDots(color: Color(0xFF95DEFD), size: 50.0),
         ),
       );
     }
@@ -146,7 +129,7 @@ class _YoloCamState extends State<YoloCam> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // CAMERA FEED -> TO CHANGE VIEW, ETC.
+          // CAMERA FRAME -> TO CHANGE VIEW, ETC.
           FittedBox(
             fit: BoxFit.cover,
             child: SizedBox(
@@ -201,7 +184,7 @@ class _YoloCamState extends State<YoloCam> {
                     ),
                   ),
 
-                  // TTS & GESTURE FEEDBACK FOR DETECTION STOP & START
+                  // CAPTURE BUTTON -GESTURE FEEDBACK FOR DETECTION STOP & START
                   GestureDetector(
                     onTap: () async {
                       if (isDetecting) {
@@ -240,7 +223,7 @@ class _YoloCamState extends State<YoloCam> {
                     ),
                   ),
 
-                  // SETTINGS BUTTON
+                  // GO TO SETTINGS BUTTON
                   GestureDetector(
                     onTap: () async {
                       await Navigator.push(
@@ -290,7 +273,7 @@ class _YoloCamState extends State<YoloCam> {
     );
   }
 
-  // DETECTION CAMERA
+  // YOLO MODEL (IMPORTANT!!)
   Future<void> yoloOnFrame(CameraImage cameraImage) async {
     final result = await vision.yoloOnFrame(
       bytesList: cameraImage.planes.map((plane) => plane.bytes).toList(),
@@ -302,6 +285,7 @@ class _YoloCamState extends State<YoloCam> {
     );
 
     final now = DateTime.now();
+    // CHECK IF TIME HAS PASSSED 4S BEFORE ANNOUNCE NEXT LABEL
     if (now.difference(_lastSpokenTime).inMilliseconds > 4000) {
       for (var detection in result) {
         final label = detection['tag'].toString();
@@ -313,9 +297,9 @@ class _YoloCamState extends State<YoloCam> {
         if (!spokenLabels.contains(label)) {
           spokenLabels.add(label);
           _lastSpokenTime = now;
-          await flutterTts.awaitSpeakCompletion(true);
+          /*await flutterTts.awaitSpeakCompletion(true);
 
-          /*if (_settings.directionMode) {
+          if (_settings.directionMode) {
             final direction = _getObjectDirection(box, cameraImage);
             await flutterTts.speak("$label is detected $direction");
           } else {
@@ -326,17 +310,21 @@ class _YoloCamState extends State<YoloCam> {
       }
     }
 
+    //  CLEAR SPOKEN LABELS OR OLD LABELS (USER KEEP UPDATED WITH DETECTED OBJECT LABEL)
     spokenLabels.removeWhere(
-      (label) => now.difference(_lastSpokenTime).inSeconds > 4,
+      (label) =>
+          now.difference(_lastSpokenTime).inSeconds >
+          4, // LASTSPOKENTIME ABOVE IS 4000 MS/4S
     );
 
-    // TTS DELAY DURATION
+    // DETECTION FRAME OR BOUNDING BOX DELAY DURATION
     setState(() {
       yoloResults = result;
     });
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 4000));
   }
 
+  // START STREAMING AND DETECTING OBJECT
   Future<void> startDetection() async {
     setState(() => isDetecting = true);
     if (controller.value.isStreamingImages) return;
@@ -349,11 +337,12 @@ class _YoloCamState extends State<YoloCam> {
     });
   }
 
+  // STOP DETETCTING OBJECT
   Future<void> stopDetection() async {
     setState(() {
       isDetecting = false;
-      yoloResults
-          .clear(); // CLEARING THE DETECTION RESULT (STOP FROM DETECTING OBJECT)
+      // CLEARING THE DETECTION RESULT (STOP FROM DETECTING OBJECT)
+      yoloResults.clear();
     });
   }
 
@@ -379,7 +368,7 @@ class _YoloCamState extends State<YoloCam> {
     }
   }*/ // CLOSE DIR MODE
 
-  // BOUNDING BOXES
+  // BOUNDING BOXES OR YOLO FRAME - FRAME, LABEL COLOR, TAG, ETC
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
     if (yoloResults.isEmpty) return [];
 
