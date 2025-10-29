@@ -1,6 +1,5 @@
 import 'package:echoeyes/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
-//import 'package:camera/camera.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +14,6 @@ class EchoEyesApp extends StatelessWidget {
     return (MaterialApp(
       debugShowCheckedModeBanner: false,
       home: const SplashScreen(),
-      title: 'EchoEyes Object Detection',
-      theme: ThemeData(
-        primaryColor: Colors.white,
-        scaffoldBackgroundColor: Colors.white,
-      ),
     ));
   }
 }

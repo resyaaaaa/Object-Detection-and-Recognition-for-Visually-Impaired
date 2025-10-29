@@ -23,11 +23,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   static const Map<String, String> _languageOptions = {
     'en-US': 'English (US)',
-    'en-GB': 'English (UK)',
-    'fr-FR': 'French',
-    'de-DE': 'German',
-    'ms-MY': 'Malay',
-    'zh-CN': 'Mandarin (Simplified)',
+    'en-UK': 'English (UK)',
+    'fr-FR': 'French (France)',
+    'de-DE': 'German (Germany)',
+    'es-ES': 'Spanish (Spain)',
   };
 
   @override
@@ -333,14 +332,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onChanged: (v) =>
             _updateSetting((s) => s.copyWith(confidenceThreshold: v)),
       ),
-      const Divider(),
+      // TEMPORARILY DISABLED
+      /*const Divider(),
       SwitchSettingWidget(
         title: 'Direction Feedback',
         subtitle: 'Alerts direction of the detected object',
         value: _settings.directionMode,
         settings: _settings,
         onChanged: (v) => _updateSetting((s) => s.copyWith(directionMode: v)),
-      ),
+      ),*/
     ],
   );
 
@@ -370,13 +370,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   );
 }
 
+// SCROLL BEHAVIOR - DISABLE GLOW EFFECT WHEN OVERSCROLL
 class _NoGlow extends ScrollBehavior {
   const _NoGlow();
 
-  Widget buildViewportChrome(
+  @override
+  Widget buildOverscrollIndicator(
     BuildContext context,
     Widget child,
-    AxisDirection axisDirection,
+    ScrollableDetails details,
   ) {
     return child;
   }
