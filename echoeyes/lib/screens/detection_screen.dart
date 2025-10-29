@@ -6,6 +6,7 @@ import 'package:echoeyes/services/tts_service.dart';
 import 'package:echoeyes/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
@@ -69,6 +70,7 @@ class _YoloCamState extends State<YoloCam> {
       orElse: () => widget.camerass[0],
     );
 
+    // CAM - USE BACK CAMERA FOR DETECTION, HIGH-RES CAM
     controller = CameraController(backCamera, ResolutionPreset.high);
     await controller.initialize();
     await loadYoloModel();
@@ -91,6 +93,7 @@ class _YoloCamState extends State<YoloCam> {
     super.dispose();
   }
 
+  // LOAD TRAINED-YOLO MODEL
   Future<void> loadYoloModel() async {
     await vision.loadYoloModel(
       labels: 'assets/labels/pedestrian12.txt',
@@ -105,10 +108,20 @@ class _YoloCamState extends State<YoloCam> {
   @override
   Widget build(BuildContext context) {
     if (!isLoaded) {
-      return const Scaffold(body: Center(child: Text("Loading model...")));
+      // LOADING INDICATOR (WAITING FOR YOLO)
+      return Scaffold(
+        body: Center(
+          child: const SpinKitChasingDots(
+            color: Color(0xFF95DEFD), 
+            size: 50.0,
+            ),
+        ),
+      );
     }
 
+    // RETURN TO CAM MAIN UI
     return Scaffold(
+      // APPBAR - return icon & echoeyes title
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
@@ -195,10 +208,10 @@ class _YoloCamState extends State<YoloCam> {
                         await stopDetection();
                         await flutterTts.stop();
                         TTSService.clearLabelCache();
-                        await TTSService.speak("Stop Detection");
+                        await TTSService.speak("Stop detection");
                       } else {
                         await startDetection();
-                        await TTSService.speak("Start Detection");
+                        await TTSService.speak("Start detection");
                       }
                     },
                     child: Container(
@@ -276,7 +289,7 @@ class _YoloCamState extends State<YoloCam> {
       child: Icon(icon, color: color, size: 30),
     );
   }
-  
+
   // DETECTION CAMERA
   Future<void> yoloOnFrame(CameraImage cameraImage) async {
     final result = await vision.yoloOnFrame(
@@ -302,13 +315,13 @@ class _YoloCamState extends State<YoloCam> {
           _lastSpokenTime = now;
           await flutterTts.awaitSpeakCompletion(true);
 
-          if (_settings.directionMode) {
+          /*if (_settings.directionMode) {
             final direction = _getObjectDirection(box, cameraImage);
             await flutterTts.speak("$label is detected $direction");
           } else {
             await flutterTts.speak("$label is detected");
           }
-          break;
+          break;*/
         }
       }
     }
@@ -321,7 +334,7 @@ class _YoloCamState extends State<YoloCam> {
     setState(() {
       yoloResults = result;
     });
-    await Future.delayed(const Duration(milliseconds: 600));
+    await Future.delayed(const Duration(seconds: 1));
   }
 
   Future<void> startDetection() async {
@@ -339,12 +352,13 @@ class _YoloCamState extends State<YoloCam> {
   Future<void> stopDetection() async {
     setState(() {
       isDetecting = false;
-      yoloResults.clear();
+      yoloResults
+          .clear(); // CLEARING THE DETECTION RESULT (STOP FROM DETECTING OBJECT)
     });
   }
 
   /// LOGIC FOR DIRECTIONAL MODE
-  String _getObjectDirection(List<dynamic> box, CameraImage cameraImage) {
+  /*String _getObjectDirection(List<dynamic> box, CameraImage cameraImage) {
     final double centerX = (box[0] + box[2]) / 2.0; // Object's centerX
     final double frameWidth = cameraImage.width
         .toDouble(); // convert frame width to double
@@ -363,7 +377,7 @@ class _YoloCamState extends State<YoloCam> {
     } else {
       return "ahead";
     }
-  }
+  }*/ // CLOSE DIR MODE
 
   // BOUNDING BOXES
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
@@ -400,5 +414,5 @@ class _YoloCamState extends State<YoloCam> {
         ),
       );
     }).toList();
-  }
+  } // CLOSE BOUNDING BOXES
 }
