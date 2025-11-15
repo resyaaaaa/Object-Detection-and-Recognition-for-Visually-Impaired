@@ -25,7 +25,7 @@ class TTSService {
     final timeGap = now.difference(_lastSpoken).inMilliseconds;
 
     // SPEAK AFTER 4S HAVE PASSED (AVOID REPETITIVE SPEECH OUTPUT)
-    if (!_spokenLabels.contains(text) && timeGap > 2500) {
+    if (!_spokenLabels.contains(text) && timeGap > 2000) {
       try {
         _spokenLabels.add(text);
         _lastSpoken = now;

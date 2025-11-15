@@ -286,7 +286,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
     final now = DateTime.now();
     // CHECK IF TIME HAS PASSSED 4S BEFORE ANNOUNCE NEXT LABEL
-    if (now.difference(_lastSpokenTime).inMilliseconds > 2500) {
+    if (now.difference(_lastSpokenTime).inMilliseconds > 2000) {
       for (var detection in result) {
         final label = detection['tag'].toString();
         final box = detection['box'];
@@ -314,14 +314,14 @@ class _DetectionScreenState extends State<DetectionScreen> {
     spokenLabels.removeWhere(
       (label) =>
           now.difference(_lastSpokenTime).inMilliseconds >
-          2500, // LASTSPOKENTIME ABOVE IS 4000 MS/4S
+          2000, // LASTSPOKENTIME ABOVE IS 4000 MS/4S
     );
 
     // DETECTION FRAME OR BOUNDING BOX DELAY DURATION
     setState(() {
       yoloResults = result;
     });
-    await Future.delayed(const Duration(milliseconds: 2500));
+    await Future.delayed(const Duration(milliseconds: 2000));
   }
 
   // START STREAMING AND DETECTING OBJECT
