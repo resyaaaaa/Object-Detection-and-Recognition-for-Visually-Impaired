@@ -8,7 +8,7 @@ class SettingsService {
   static const _keySwitchMode = 'switchMode';
   static const _keyConfidenceThreshold = 'confidenceThreshold';
   static const _keyFontSize = 'fontSize';
-  //static const _keyDirectionMode = 'directionMode';
+  static const _keyDirectionMode = 'directionMode';
 
   static Future<AppSettings> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
@@ -20,7 +20,7 @@ class SettingsService {
       switchMode: prefs.getBool(_keySwitchMode) ?? false,
       confidenceThreshold: prefs.getDouble(_keyConfidenceThreshold) ?? 0.5,
       fontSize: prefs.getDouble(_keyFontSize) ?? 13.0,
-      //directionMode: prefs.getBool(_keyDirectionMode) ?? false,
+      directionMode: prefs.getBool(_keyDirectionMode) ?? false,
     );
   }
 
@@ -36,6 +36,6 @@ class SettingsService {
       settings.confidenceThreshold,
     );
     await prefs.setDouble(_keyFontSize, settings.fontSize);
-    //await prefs.setBool(_keyDirectionMode, settings.directionMode);
+    await prefs.setBool(_keyDirectionMode, settings.directionMode);
   }
 }

@@ -52,11 +52,12 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4 # launcher icons
 
 # launcher icons image path, etc.
+# to run ==> flutter pub run flutter_launcher_icons
 flutter_icons:
   android: true
-  image_path: "assets/icons/echoeyes_icon.png"
-  adaptive_icon_background: "#ffffff"
-  adaptive_icon_foreground: "assets/icons/echoeyes_icon.png"
+  image_path: "assets/icons/echo_icon.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/icons/echo_icon.png"
 
 
 
@@ -72,11 +73,13 @@ flutter:
   assets:
     - assets/labels/pedestrian12.txt
     - assets/yolov8n.tflite
+    - assets/best_float32.tflite
     - assets/images/echoeyes_logo.png
     - assets/icons/echoeyes_logo.png
     - assets/images/echoeyes2_logo.png
     - assets/icons/echoeyes2_logo.png
     - assets/icons/echoeyes_icon.png
+    - assets/icons/echo_icon.png
     - assets/icons/echoeyes_icon_tp.png
 
 

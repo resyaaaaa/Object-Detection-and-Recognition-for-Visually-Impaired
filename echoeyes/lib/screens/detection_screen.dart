@@ -83,7 +83,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
   Future<void> loadYoloModel() async {
     await vision.loadYoloModel(
       labels: 'assets/labels/pedestrian12.txt',
-      modelPath: 'assets/yolov8n.tflite',
+      modelPath: 'assets/best_float32.tflite',
       modelVersion: "yolov8",
       quantization: false,
       numThreads: 1,
@@ -286,7 +286,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
     final now = DateTime.now();
     // CHECK IF TIME HAS PASSSED 4S BEFORE ANNOUNCE NEXT LABEL
-    if (now.difference(_lastSpokenTime).inMilliseconds > 4000) {
+    if (now.difference(_lastSpokenTime).inMilliseconds > 2500) {
       for (var detection in result) {
         final label = detection['tag'].toString();
         final box = detection['box'];
@@ -297,15 +297,15 @@ class _DetectionScreenState extends State<DetectionScreen> {
         if (!spokenLabels.contains(label)) {
           spokenLabels.add(label);
           _lastSpokenTime = now;
-          /*await flutterTts.awaitSpeakCompletion(true);
+          await flutterTts.awaitSpeakCompletion(true);
 
           if (_settings.directionMode) {
-            final direction = _getObjectDirection(box, cameraImage);
+            final direction = _getObjectDirection(box, cameraImage, MediaQuery.of(context).size);
             await flutterTts.speak("$label is detected $direction");
           } else {
             await flutterTts.speak("$label is detected");
           }
-          break;*/
+          break;
         }
       }
     }
@@ -313,15 +313,15 @@ class _DetectionScreenState extends State<DetectionScreen> {
     //  CLEAR SPOKEN LABELS OR OLD LABELS (USER KEEP UPDATED WITH DETECTED OBJECT LABEL)
     spokenLabels.removeWhere(
       (label) =>
-          now.difference(_lastSpokenTime).inSeconds >
-          4, // LASTSPOKENTIME ABOVE IS 4000 MS/4S
+          now.difference(_lastSpokenTime).inMilliseconds >
+          2500, // LASTSPOKENTIME ABOVE IS 4000 MS/4S
     );
 
     // DETECTION FRAME OR BOUNDING BOX DELAY DURATION
     setState(() {
       yoloResults = result;
     });
-    await Future.delayed(const Duration(milliseconds: 4000));
+    await Future.delayed(const Duration(milliseconds: 2500));
   }
 
   // START STREAMING AND DETECTING OBJECT
@@ -347,26 +347,23 @@ class _DetectionScreenState extends State<DetectionScreen> {
   }
 
   /// LOGIC FOR DIRECTIONAL MODE
-  /*String _getObjectDirection(List<dynamic> box, CameraImage cameraImage) {
-    final double centerX = (box[0] + box[2]) / 2.0; // Object's centerX
-    final double frameWidth = cameraImage.width
-        .toDouble(); // convert frame width to double
+  String _getObjectDirection(List<dynamic> box, CameraImage cameraImage, Size previewSize) {
+    double frameWidth = previewSize.width / cameraImage.height;
+    double centerX = ((box[0] + box[2]) / 2.0) * frameWidth; // Object's centerX
+    // convert frame width to double
     
-    final double dirSection =
-        frameWidth / 4.0; // divide frame into 4 vertical sections
+     double dirSection =
+        previewSize.width / 3.0; // divide frame into 3 vertical sections
     
-    // DIRECTIOM BASED ON 4 SECTIONS
-    final double leftBoundary = dirSection; // LEFT SECTION 1/4
-    final double rightBoundary = frameWidth - dirSection; // RIGHT SECTION 4/4
-
-    if (centerX < leftBoundary) {
+   
+    if (centerX < dirSection) {
       return "on the left";
-    } else if (centerX > rightBoundary) {
+    } else if (centerX > 2 * dirSection) {
       return "on the right";
     } else {
       return "ahead";
     }
-  }*/ // CLOSE DIR MODE
+  } // CLOSE DIR MODE
 
   // BOUNDING BOXES OR YOLO FRAME - FRAME, LABEL COLOR, TAG, ETC
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
