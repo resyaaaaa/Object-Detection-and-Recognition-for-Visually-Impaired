@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen>
   // GESTURE FEEDBACK'S INSTRUCTION - TTS
   Future<void> _speakInstructions() async {
     await Future.delayed(const Duration(milliseconds: 500));
-    await TTSService.speak("Double tap to start detection");
+    //await TTSService.speak("Double tap to start detection");
   }
 
   // CAMERA BUTTON IS CLICKED TTS
