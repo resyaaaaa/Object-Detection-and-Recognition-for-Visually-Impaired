@@ -27,6 +27,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     'fr-FR': 'French (France)',
     'de-DE': 'German (Germany)',
     'es-ES': 'Spanish (Spain)',
+    'zh-CN': 'Mandarin (Simplified)',
   };
 
   @override
@@ -186,7 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return PopScope(
       canPop: !_hasChanges,
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) async {
         if (!didPop && _hasChanges) {
           final shouldPop = await _showUnsavedChangesDialog();
           if (shouldPop && mounted) Navigator.pop(context);
@@ -332,15 +333,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onChanged: (v) =>
             _updateSetting((s) => s.copyWith(confidenceThreshold: v)),
       ),
-      // TEMPORARILY DISABLED
-      /*const Divider(),
+      
+      const Divider(),
       SwitchSettingWidget(
         title: 'Direction Feedback',
         subtitle: 'Alerts direction of the detected object',
         value: _settings.directionMode,
         settings: _settings,
         onChanged: (v) => _updateSetting((s) => s.copyWith(directionMode: v)),
-      ),*/
+      ),
     ],
   );
 

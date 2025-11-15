@@ -5,7 +5,7 @@ class AppSettings {
   bool switchMode;
   double confidenceThreshold;
   double fontSize;
-  //bool directionMode;
+  bool directionMode;
 
   AppSettings({
     this.speechRate = 0.5,
@@ -14,7 +14,7 @@ class AppSettings {
     this.switchMode = false,
     this.confidenceThreshold = 0.5,
     this.fontSize = 13.0,
-    //this.directionMode = false,
+    this.directionMode = false,
   });
 
   AppSettings copyWith({
@@ -24,7 +24,7 @@ class AppSettings {
     bool? switchMode,
     double? confidenceThreshold,
     double? fontSize,
-    //bool? directionMode,
+    bool? directionMode,
   }) {
     return AppSettings(
       speechRate: speechRate ?? this.speechRate,
@@ -33,7 +33,7 @@ class AppSettings {
       switchMode: switchMode ?? this.switchMode,
       confidenceThreshold: confidenceThreshold ?? this.confidenceThreshold,
       fontSize: fontSize ?? this.fontSize,
-      //directionMode: directionMode ?? this.directionMode,
+      directionMode: directionMode ?? this.directionMode,
     );
   }
 
@@ -44,7 +44,7 @@ class AppSettings {
     'switchMode': switchMode,
     'confidenceThreshold': confidenceThreshold,
     'fontSize': fontSize,
-    //'directionMode' : directionMode,
+    'directionMode' : directionMode,
   };
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
@@ -56,7 +56,7 @@ class AppSettings {
       confidenceThreshold:
           (json['confidenceThreshold'] as num?)?.toDouble() ?? 0.5,
       fontSize: (json['fontSize'] as num?)?.toDouble() ?? 13.0,
-      //directionMode: json['directionMode'] as bool? ?? false,
+      directionMode: json['directionMode'] as bool? ?? false,
     );
   }
 }
