@@ -71,16 +71,13 @@ flutter:
 
   # Assets needed for this app
   assets:
-    - assets/labels/pedestrian12.txt
+    - assets/labels/label.txt
     - assets/yolov8n.tflite
     - assets/best_float32.tflite
-    - assets/images/echoeyes_logo.png
-    - assets/icons/echoeyes_logo.png
+    - assets/best_float16.tflite
     - assets/images/echoeyes2_logo.png
     - assets/icons/echoeyes2_logo.png
-    - assets/icons/echoeyes_icon.png
     - assets/icons/echo_icon.png
-    - assets/icons/echoeyes_icon_tp.png
 
 
   # Fonts used in this app
