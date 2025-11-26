@@ -82,7 +82,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
   // LOAD TRAINED-YOLO MODEL
   Future<void> loadYoloModel() async {
     await vision.loadYoloModel(
-      labels: 'assets/labels/pedestrian12.txt',
+      labels: 'assets/labels/label.txt',
       modelPath: 'assets/best_float32.tflite',
       modelVersion: "yolov8",
       quantization: false,
