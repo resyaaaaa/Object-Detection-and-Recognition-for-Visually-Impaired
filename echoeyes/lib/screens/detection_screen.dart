@@ -1,4 +1,6 @@
 // APP FILES AND PACKAGES IMPORT
+import 'dart:io';
+import 'dart:ui' as ui;
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:echoeyes/screens/settings_screen.dart';
 import 'package:echoeyes/services/settings_service.dart';
@@ -6,6 +8,7 @@ import 'package:echoeyes/services/tts_service.dart';
 import 'package:echoeyes/widgets/custom_text.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vision/flutter_vision.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -18,6 +21,7 @@ Set<String> spokenLabels = {};
 class DetectionScreen extends StatefulWidget {
   final AppSettings settings;
   final List<CameraDescription> camerass;
+
   const DetectionScreen({
     super.key,
     required this.camerass,
@@ -29,10 +33,13 @@ class DetectionScreen extends StatefulWidget {
 }
 
 class _DetectionScreenState extends State<DetectionScreen> {
+  final GlobalKey _previewKey = GlobalKey();
+  //ORIGINAL CODE
   late CameraController controller;
   late FlutterVision vision;
   late List<Map<String, dynamic>> yoloResults;
   late AppSettings _settings;
+  //
 
   CameraImage? cameraImage;
   bool isLoaded = false;
@@ -130,15 +137,41 @@ class _DetectionScreenState extends State<DetectionScreen> {
         fit: StackFit.expand,
         children: [
           // CAMERA FRAME -> TO CHANGE VIEW, ETC.
-          FittedBox(
-            fit: BoxFit.cover,
-            child: SizedBox(
-              width: controller.value.previewSize?.height,
-              height: controller.value.previewSize?.width,
-              child: CameraPreview(controller),
+          RepaintBoundary(
+            key: _previewKey,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: controller.value.previewSize?.height,
+                    height: controller.value.previewSize?.width,
+                    child:
+                        // For Auto-Focus when tapped
+                        GestureDetector(
+                          onTapDown: (details) async {
+                            final offset = Offset(
+                              details.localPosition.dx /
+                                  MediaQuery.of(context).size.width,
+                              details.localPosition.dy /
+                                  MediaQuery.of(context).size.height,
+                            );
+                            await controller.setFocusPoint(offset);
+                           await controller.setFocusMode(FocusMode.auto);
+                          },
+
+                          child: CameraPreview(controller),
+                        ),
+                  ),
+                ),
+                // Here's to call the bounding boxes on camera feed
+                ...displayBoxesAroundRecognizedObjects(
+                  MediaQuery.of(context).size,
+                ),
+              ],
             ),
           ),
-          ...displayBoxesAroundRecognizedObjects(MediaQuery.of(context).size),
 
           // NAVBAR, BUTTON @BOTTOM
           Positioned(
@@ -300,7 +333,11 @@ class _DetectionScreenState extends State<DetectionScreen> {
           await flutterTts.awaitSpeakCompletion(true);
 
           if (_settings.directionMode) {
-            final direction = _getObjectDirection(box, cameraImage, MediaQuery.of(context).size);
+            final direction = _getObjectDirection(
+              box,
+              cameraImage,
+              MediaQuery.of(context).size,
+            );
             await flutterTts.speak("$label is detected $direction");
           } else {
             await flutterTts.speak("$label is detected");
@@ -342,20 +379,23 @@ class _DetectionScreenState extends State<DetectionScreen> {
     setState(() {
       isDetecting = false;
       // CLEARING THE DETECTION RESULT (STOP FROM DETECTING OBJECT)
-      yoloResults.clear();
+      //yoloResults.clear();
     });
   }
 
   /// LOGIC FOR DIRECTIONAL MODE
-  String _getObjectDirection(List<dynamic> box, CameraImage cameraImage, Size previewSize) {
+  String _getObjectDirection(
+    List<dynamic> box,
+    CameraImage cameraImage,
+    Size previewSize,
+  ) {
     double frameWidth = previewSize.width / cameraImage.height;
     double centerX = ((box[0] + box[2]) / 2.0) * frameWidth; // Object's centerX
     // convert frame width to double
-    
-     double dirSection =
+
+    double dirSection =
         previewSize.width / 3.0; // divide frame into 3 vertical sections
-    
-   
+
     if (centerX < dirSection) {
       return "on the left";
     } else if (centerX > 2 * dirSection) {
@@ -386,13 +426,12 @@ class _DetectionScreenState extends State<DetectionScreen> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: const BorderRadius.all(Radius.circular(10)),
-            border: Border.all(color: Colors.amber.shade700, width: 2),
+            border: Border.all(color: Colors.cyanAccent.shade400, width: 2),
           ),
           child: Text(
-            "${result['tag']} ${(result['box'][4] * 100).toStringAsFixed(1)}",
+            "${result['tag']} ${result['box'][4].toStringAsFixed(2)}", // Return 2 decimal
             style: MyTextStyles.semiBold.copyWith(
-              background: Paint()
-                ..color = const Color.fromARGB(255, 231, 147, 1),
+              background: Paint()..color = Colors.cyanAccent.shade400,
               color: Colors.white,
               fontSize: 16,
             ),
