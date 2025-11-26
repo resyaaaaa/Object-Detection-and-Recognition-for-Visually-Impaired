@@ -1,6 +1,4 @@
 // APP FILES AND PACKAGES IMPORT
-import 'dart:io';
-import 'dart:ui' as ui;
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:echoeyes/screens/settings_screen.dart';
 import 'package:echoeyes/services/settings_service.dart';
