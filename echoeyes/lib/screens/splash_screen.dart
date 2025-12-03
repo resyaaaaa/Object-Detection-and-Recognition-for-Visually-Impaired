@@ -205,7 +205,7 @@ class _SplashScreenState extends State<SplashScreen>
   // BUTTON FOR SETTINGS AND CAMERA
   Widget _buildButton(double width, String label, VoidCallback onPressed) {
     return SizedBox(
-      width: width * 0.7,
+      width: width * 0.5,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(

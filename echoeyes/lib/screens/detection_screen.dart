@@ -200,11 +200,11 @@ class _DetectionScreenState extends State<DetectionScreen> {
                       if (_currentFlashMode == FlashMode.off) {
                         await controller.setFlashMode(FlashMode.torch);
                         setState(() => _currentFlashMode = FlashMode.torch);
-                        await TTSService.speak("Flash on");
+                        //await TTSService.speak("Flash on");
                       } else {
                         await controller.setFlashMode(FlashMode.off);
                         setState(() => _currentFlashMode = FlashMode.off);
-                        await TTSService.speak("Flash off");
+                        //await TTSService.speak("Flash off");
                       }
                     },
                     child: _circleButton(
@@ -222,10 +222,10 @@ class _DetectionScreenState extends State<DetectionScreen> {
                         await stopDetection();
                         await flutterTts.stop();
                         TTSService.clearLabelCache();
-                        await TTSService.speak("Stop detection");
+                        //await TTSService.speak("Stop detection");
                       } else {
                         await startDetection();
-                        await TTSService.speak("Start detection");
+                        //await TTSService.speak("Start detection");
                       }
                     },
                     child: Container(
@@ -316,7 +316,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
     );
 
     final now = DateTime.now();
-    // CHECK IF TIME HAS PASSSED 4S BEFORE ANNOUNCE NEXT LABEL
+    // CHECK IF TIME HAS PASSSED 2S BEFORE ANNOUNCE NEXT LABEL
     if (now.difference(_lastSpokenTime).inMilliseconds > 2000) {
       for (var detection in result) {
         final label = detection['tag'].toString();
@@ -349,7 +349,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
     spokenLabels.removeWhere(
       (label) =>
           now.difference(_lastSpokenTime).inMilliseconds >
-          2000, // LASTSPOKENTIME ABOVE IS 4000 MS/4S
+          2000, // LASTSPOKENTIME ABOVE IS 2000 MS/4S
     );
 
     // DETECTION FRAME OR BOUNDING BOX DELAY DURATION
@@ -359,7 +359,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
     await Future.delayed(const Duration(milliseconds: 2000));
   }
 
-  // START STREAMING AND DETECTING OBJECT
+  // START DETECTING OBJECT
   Future<void> startDetection() async {
     setState(() => isDetecting = true);
     if (controller.value.isStreamingImages) return;
@@ -388,8 +388,8 @@ class _DetectionScreenState extends State<DetectionScreen> {
     Size previewSize,
   ) {
     double frameWidth = previewSize.width / cameraImage.height;
-    double centerX = ((box[0] + box[2]) / 2.0) * frameWidth; // Object's centerX
-    // convert frame width to double
+    double centerX = ((box[0] + box[2]) / 2.0) * frameWidth; // To determine the center ==> bject's centerX
+
 
     double dirSection =
         previewSize.width / 3.0; // divide frame into 3 vertical sections
@@ -401,7 +401,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
     } else {
       return "ahead";
     }
-  } // CLOSE DIR MODE
+  } // CLOSE DIRECTION MODE
 
   // BOUNDING BOXES OR YOLO FRAME - FRAME, LABEL COLOR, TAG, ETC
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
