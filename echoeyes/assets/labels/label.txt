@@ -1,12 +1,13 @@
 bicycle
+bollard 
 bus
-bus_sign
-car
-crosswalk
-green_pedestrian_sign
-motorbike
-person
-pothole
-red_pedestrian_sign
-traffic_light
-truck
+bus stop
+car 
+green man 
+motorcycle 
+person 
+pothole 
+red man 
+traffic light 
+truck 
+zebra crossing
