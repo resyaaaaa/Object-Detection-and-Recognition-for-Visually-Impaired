@@ -46,7 +46,7 @@ class DropdownSettingWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
-            value: value,
+            initialValue: value,
             onChanged: onChanged,
             isExpanded: true,
             decoration: InputDecoration(
