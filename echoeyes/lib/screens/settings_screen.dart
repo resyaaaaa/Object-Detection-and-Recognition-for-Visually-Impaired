@@ -1,25 +1,47 @@
-import 'package:flutter/material.dart';
+// =====================================================
+// APP FILES AND PACKAGES IMPORT
+//======================================================
+
+// Import app models, screens, widgets and services
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:echoeyes/services/settings_service.dart';
 import 'package:echoeyes/services/tts_service.dart';
+
+// App custom fonts
 import 'package:echoeyes/widgets/custom_text.dart';
+
+// Widgets components
 import 'package:echoeyes/widgets/settings/dropdown_widgets.dart';
 import 'package:echoeyes/widgets/settings/slider_widgets.dart';
 import 'package:echoeyes/widgets/settings/switch_toggle_widgets.dart';
 
+// Import flutter core => UI MATERIAL DESIGN
+import 'package:flutter/material.dart';
+
+// Setting screen widget
 class SettingsScreen extends StatefulWidget {
-  final AppSettings settings;
+  final AppSettings settings; // Current settings rendered from previous settings
+
   const SettingsScreen({super.key, required this.settings});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
+// =====================================================
+// STATE CLASS => MANAGE SETTINGS LOGIC AND UI
+//======================================================
+
 class _SettingsScreenState extends State<SettingsScreen> {
-  late AppSettings _settings;
-  bool _isLoading = true;
-  bool _hasChanges = false;
-  bool _isSaving = false;
+  
+  late AppSettings _settings; // store editable copy of settings
+  bool _isLoading = true;     // Check if settings being loaded
+  bool _hasChanges = false;   // Check if user modify settings
+  bool _isSaving = false;     // Prevent multiple save actions at the same time
+
+// ==============================================================================
+//  AVAILABLE LANGUAGE OPTIONS FOR TTS => DEPENDS ON USER'S PHONE AVAILABLE TTS
+//===============================================================================
 
   static const Map<String, String> _languageOptions = {
     'en-US': 'English (US)',
@@ -33,8 +55,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSettings();
+    _loadSettings(); // Load saved settings when screen opens
   }
+
+// =====================================================
+// LOAD SETTINGS FROM LOCAL STORAGE
+//======================================================
 
   Future<void> _loadSettings() async {
     try {
@@ -52,14 +78,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  // Mark settings as modified
   void _markAsChanged() {
     if (!_hasChanges) setState(() => _hasChanges = true);
   }
 
+  // Update a single setting field
   void _updateSetting(AppSettings Function(AppSettings) updater) {
     setState(() => _settings = updater(_settings));
     _markAsChanged();
   }
+
+// =====================================================
+// SAVE SETTINGS TO LOCAL STORAGE 
+//======================================================
 
   Future<void> _saveSettings() async {
     if (_isSaving) return;
@@ -80,6 +112,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _showErrorDialog('Failed to save settings: ${e.toString()}');
     }
   }
+
+// =====================================================
+// SHOW ERROR MESSAGE DIALOGS
+//======================================================
 
   void _showErrorDialog(String error) {
     showDialog(
@@ -117,6 +153,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
     );
   }
+
+// =====================================================
+// CONFIRMATION ACTION WHEN USER LEAVES WITH UNSAVED MODIFIED SETTINGS
+//======================================================
 
   Future<bool> _showUnsavedChangesDialog() async {
     final save = await showDialog<bool>(
@@ -170,8 +210,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return true;
   }
 
+
   @override
   Widget build(BuildContext context) {
+    // Show 'loading' indicator while settings is load
     if (_isLoading) {
       return Scaffold(
         backgroundColor: widget.settings.switchMode
@@ -186,15 +228,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     return PopScope(
-      canPop: !_hasChanges,
+      canPop: !_hasChanges, // Prevent back navigation if unsaved changes exist
+      
       onPopInvokedWithResult: (didPop, result) async {
         if (!didPop && _hasChanges) {
           final shouldPop = await _showUnsavedChangesDialog();
+          // ignore: use_build_context_synchronously
           if (shouldPop && mounted) Navigator.pop(context);
         }
       },
+
+// =====================================================
+// CHANGE BACKGROUND, INCLUDE WIDGETS
+//======================================================
       child: Scaffold(
-        // CHANGE BACKGROUND ==>
+        
         backgroundColor: _settings.switchMode
             ? Colors.amberAccent[700]
             : const Color.fromARGB(255, 217, 235, 244),
@@ -219,6 +267,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+// =====================================================
+// APPBAR WITH SAVE BUTTON
+//======================================================
   PreferredSizeWidget _buildAppBar() {
     // APPBAR ==>
     return AppBar(
@@ -249,7 +300,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   )
                 : Text(
-                    'Save',
+                    'Save', // SAVE BUTTON
                     style: MyTextStyles.bold.copyWith(
                       color: (_hasChanges && !_isSaving)
                           ? Colors.black
@@ -263,6 +314,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+// =====================================================
+// SETTINGS SECTIONS WRAPS INTO A CARD
+//======================================================
   Widget _buildSection(String title, Widget content) {
     final highContrastMode = _settings.switchMode;
 
@@ -371,7 +425,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   );
 }
 
+// =====================================================
 // SCROLL BEHAVIOR - DISABLE GLOW EFFECT WHEN OVERSCROLL
+//======================================================
+
 class _NoGlow extends ScrollBehavior {
   const _NoGlow();
 

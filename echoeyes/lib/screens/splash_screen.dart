@@ -1,13 +1,24 @@
-import 'package:camera/camera.dart';
+// =====================================================
+// APP FILES AND PACKAGES IMPORT
+//======================================================
+// Import app models, screens, widgets and services
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:echoeyes/screens/detection_screen.dart';
 import 'package:echoeyes/screens/settings_screen.dart';
 import 'package:echoeyes/services/settings_service.dart';
 import 'package:echoeyes/services/tts_service.dart';
+
+// App custom font
 import 'package:echoeyes/widgets/custom_text.dart';
+
+// Import flutter core => UI MATERIAL DESIGN
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Import plugin to access device camera
+import 'package:camera/camera.dart';
+
+// Display splash screen when app starts
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -15,29 +26,39 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
+// =====================================================
+// STATE CLASS => animation
+//======================================================
+
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _animationController;
-  late final Animation<double> _fadeAnimation;
-  late final Animation<double> _scaleAnimation;
-  late AppSettings _settings;
+
+  late final AnimationController _animationController; // Control all splash animations
+  late final Animation<double> _fadeAnimation;         // Control fade-in effect
+  late final Animation<double> _scaleAnimation;        // Control zoom-in effect
+  late AppSettings _settings;                          // Store current app settings
 
   @override
   void initState() {
     super.initState();
-    _settings = AppSettings();
-    _initializeAnimations();
-    _loadSettings();
-    _speakInstructions();
+    _settings = AppSettings(); // Create initial default settings
+    _initializeAnimations();   // Prepare splash animations
+    _loadSettings();           // Load saved user settings
+    _speakInstructions();      // Speak instructions (Instruct gesture feedback)
   }
 
-  // ANIMATION FOR SMOOTH SPLASH TRANSITION
+// =====================================================
+// INITIALIZE FADE AND SCALE ANIMATIONS 
+//======================================================
   void _initializeAnimations() {
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
 
+// =====================================================
+// FADE ANIMATION => fade-in effect
+//======================================================
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -45,6 +66,9 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
+// =====================================================
+// SCALE ANIMATION => zoom-in with bounce effect
+//======================================================
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -55,16 +79,21 @@ class _SplashScreenState extends State<SplashScreen>
     _animationController.forward();
   }
 
-  // LOAD SAVED SETTINGS BEFORE GF'S INSTRUCTIONS
+// =====================================================
+// LOAD SAVED SETTINGS AND UPDATE TTS CONFIG
+//======================================================
+
   Future<void> _loadSettings() async {
     final saved = await SettingsService.loadSettings();
-    setState(() => _settings = saved);
-    await TTSService.updateSettings(_settings);
+    setState(() => _settings = saved);          // Update local state with saved settings
+    await TTSService.updateSettings(_settings); // Apply settings to TTS engine
 
-    _speakInstructions();
+    _speakInstructions();                       // Speak instruction after settings are ready
   }
 
-  // GESTURE FEEDBACK'S INSTRUCTION - TTS
+// =====================================================
+// GESTURE FEEDBACK'S INSTRUCTION => TTS
+//======================================================
   Future<void> _speakInstructions() async {
     await Future.delayed(const Duration(milliseconds: 500));
     //await TTSService.speak("Double tap to start detection");
@@ -75,36 +104,42 @@ class _SplashScreenState extends State<SplashScreen>
     await TTSService.speak("Opening camera");
 
     showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
       barrierDismissible: false,
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
 
+    // Fetch available cameras
     final cameras = await availableCameras();
 
     if (!mounted) return;
-    Navigator.pop(context);
+    Navigator.pop(context); // Close 'loading'
 
+
+    // Navigate to detection_screen
     Navigator.push(
       context,
       MaterialPageRoute(
-        // ROUTE TO DETECTION SCREEN
         builder: (_) => DetectionScreen(camerass: cameras, settings: _settings),
       ),
     );
   }
 
-  // SETTINGS BUTTON IS CLICKED TTS
+// =====================================================
+// SETTINGS BUTTON IS CLICKED TTS
+//======================================================
   Future<void> _openSettings() async {
     await TTSService.speak("Opening settings");
 
     final loaded = await SettingsService.loadSettings();
+    // Navigate to settings_screen
     final result = await Navigator.push(
+      // ignore: use_build_context_synchronously
       context,
-      // GO TO SETTINGS SCREEN
       MaterialPageRoute(builder: (_) => SettingsScreen(settings: loaded)),
     );
-
+    // Apply new updated settings when returned
     if (result != null && mounted) {
       setState(() => _settings = result);
       await SettingsService.saveSettings(_settings);
@@ -122,11 +157,15 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
 
+    // Allow gestures anywhere on screen => Double-Tap
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      //in order the button still works even adding gesture control
+      // Make sure button still works even adding gesture control
       onDoubleTap: _openCamera,
 
+// ========================================================
+// UI => background gradient, app icon, title, description
+//=========================================================
       child: Scaffold(
         body: AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle.light,
@@ -197,12 +236,16 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 
-  // LOGO IMAGE PATH
+// =====================================================
+// LOGO IMAGE PATH
+//======================================================
   Widget _buildLogo() {
     return Image.asset('assets/images/echoeyes2_logo.png', fit: BoxFit.contain);
   }
 
-  // BUTTON FOR SETTINGS AND CAMERA
+// =====================================================
+// BUTTON FOR SETTINGS AND CAMERA
+//======================================================
   Widget _buildButton(double width, String label, VoidCallback onPressed) {
     return SizedBox(
       width: width * 0.5,

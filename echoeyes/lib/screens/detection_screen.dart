@@ -1,23 +1,35 @@
+// =====================================================
 // APP FILES AND PACKAGES IMPORT
+//======================================================
+// Import app models, screens, widgets and services
 import 'package:echoeyes/models/settings_model.dart';
 import 'package:echoeyes/screens/settings_screen.dart';
 import 'package:echoeyes/services/settings_service.dart';
 import 'package:echoeyes/services/tts_service.dart';
 import 'package:echoeyes/widgets/custom_text.dart';
+
+// Import flutter core => UI MATERIAL DESIGN
 import 'package:flutter/material.dart';
+
+// Import camera and vision (object detection)
 import 'package:camera/camera.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_vision/flutter_vision.dart';
+
+// Import UI and TTS 
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+// Store all of available camera detected on the device
 late List<CameraDescription> cameras;
+// Control text-to-speech playback (lang, rate & volume)
 late FlutterTts flutterTts;
 
 Set<String> spokenLabels = {};
 
 class DetectionScreen extends StatefulWidget {
+  // Store user settings
   final AppSettings settings;
+  // Receive camera list from main app
   final List<CameraDescription> camerass;
 
   const DetectionScreen({
@@ -30,22 +42,28 @@ class DetectionScreen extends StatefulWidget {
   State<DetectionScreen> createState() => _DetectionScreenState();
 }
 
+// =====================================================
+// STATE CLASS => HANDLE CAMERA, YOLO AND TTS
+//======================================================
 class _DetectionScreenState extends State<DetectionScreen> {
-  final GlobalKey _previewKey = GlobalKey();
-  //ORIGINAL CODE
-  late CameraController controller;
-  late FlutterVision vision;
-  late List<Map<String, dynamic>> yoloResults;
-  late AppSettings _settings;
-  //
+ 
+  final GlobalKey _previewKey = GlobalKey();    // Marks camera preview feed
+  
+  late CameraController controller;             // Control camera stream
+  late FlutterVision vision;                    // Run YOLO detection model
+  late List<Map<String, dynamic>> yoloResults;  // Store YOLO detection result
+  late AppSettings _settings;                   // Active user settings
 
-  CameraImage? cameraImage;
-  bool isLoaded = false;
-  bool isDetecting = false;
-  FlashMode _currentFlashMode = FlashMode.off;
+  CameraImage? cameraImage;       // Current camera frame
 
-  static DateTime _lastSpokenTime = DateTime.now();
+  bool isLoaded = false;                        // Check if the setup is done
+  bool isDetecting = false;                     // Check detection on/off flag
 
+  FlashMode _currentFlashMode = FlashMode.off;  // Flashlight state
+
+  static DateTime _lastSpokenTime = DateTime.now();   // Limit speech frequency
+
+// Start camera setup
   @override
   void initState() {
     super.initState();
@@ -53,24 +71,26 @@ class _DetectionScreenState extends State<DetectionScreen> {
   }
 
   Future<void> init() async {
-    vision = FlutterVision();
-    _settings = await SettingsService.loadSettings();
+    vision = FlutterVision();                         // Create YOLO engine
+    _settings = await SettingsService.loadSettings(); // Load saved settings
 
-    final backCamera = widget.camerass.firstWhere(
+    // Select back-camera
+    final backCamera = widget.camerass.firstWhere(    
       (camera) => camera.lensDirection == CameraLensDirection.back,
       orElse: () => widget.camerass[0],
     );
+    
+    controller = CameraController(backCamera, ResolutionPreset.high); // HIGH-RES camera
+    await controller.initialize();                                    // Start camera
+    await loadYoloModel();                                            // Load YOLO detection model
 
-    // CAM - USE BACK CAMERA FOR DETECTION, HIGH-RES CAM
-    controller = CameraController(backCamera, ResolutionPreset.high);
-    await controller.initialize();
-    await loadYoloModel();
-
+    // Setup TTS engine
     flutterTts = FlutterTts();
     await flutterTts.setLanguage(_settings.language);
     await flutterTts.setSpeechRate(_settings.speechRate);
     await flutterTts.setVolume(_settings.speechVolume);
-
+  
+  // App is ready
     setState(() {
       isLoaded = true;
       yoloResults = [];
@@ -79,12 +99,14 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
   @override
   void dispose() {
-    controller.dispose();
-    vision.closeYoloModel();
+    controller.dispose();     // Release camera
+    vision.closeYoloModel();  // Close YOLO model
     super.dispose();
   }
 
-  // LOAD TRAINED-YOLO MODEL
+// =====================================================
+// LOAD YOLO DETECTION MODEL
+//======================================================
   Future<void> loadYoloModel() async {
     await vision.loadYoloModel(
       labels: 'assets/labels/label.txt',
@@ -98,8 +120,9 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    // Show 'loading' animation while initializing
     if (!isLoaded) {
-      // LOADING INDICATOR (WAITING FOR YOLO)
       return Scaffold(
         body: Center(
           child: const SpinKitChasingDots(color: Color(0xFF95DEFD), size: 50.0),
@@ -107,7 +130,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
       );
     }
 
-    // RETURN TO CAM MAIN UI
+    // Main camera and detection_screen
     return Scaffold(
       // APPBAR - return icon & echoeyes title
       appBar: AppBar(
@@ -304,7 +327,9 @@ class _DetectionScreenState extends State<DetectionScreen> {
     );
   }
 
-  // YOLO MODEL (IMPORTANT!!)
+// =====================================================
+// RUN YOLO MODEL ON CAMERA FRAME --IMPORTANT--
+//======================================================
   Future<void> yoloOnFrame(CameraImage cameraImage) async {
     final result = await vision.yoloOnFrame(
       bytesList: cameraImage.planes.map((plane) => plane.bytes).toList(),
@@ -334,6 +359,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
             final direction = _getObjectDirection(
               box,
               cameraImage,
+              // ignore: use_build_context_synchronously
               MediaQuery.of(context).size,
             );
             await flutterTts.speak("$label is detected $direction");
@@ -354,12 +380,14 @@ class _DetectionScreenState extends State<DetectionScreen> {
 
     // DETECTION FRAME OR BOUNDING BOX DELAY DURATION
     setState(() {
-      yoloResults = result;
+      yoloResults = result; // Detection result
     });
     await Future.delayed(const Duration(milliseconds: 2000));
   }
 
-  // START DETECTING OBJECT
+// =====================================================
+// START CAMERA STREAM AND OBJECT DETECTION
+//======================================================
   Future<void> startDetection() async {
     setState(() => isDetecting = true);
     if (controller.value.isStreamingImages) return;
@@ -367,21 +395,25 @@ class _DetectionScreenState extends State<DetectionScreen> {
     await controller.startImageStream((image) async {
       if (isDetecting) {
         cameraImage = image;
-        await yoloOnFrame(image);
+        await yoloOnFrame(image); // Detect object
       }
     });
   }
 
-  // STOP DETETCTING OBJECT
+// =====================================================
+// STOP OBJECT DETECTION
+//======================================================
   Future<void> stopDetection() async {
     setState(() {
       isDetecting = false;
-      // CLEARING THE DETECTION RESULT (STOP FROM DETECTING OBJECT)
-      //yoloResults.clear();
+      // Clear detection result (STOP FROM DETECTING OBJECT)
+      //yoloResults.clear(); // Off to for testing=> screenshots purposes
     });
   }
 
-  /// LOGIC FOR DIRECTIONAL MODE
+// =====================================================
+// DIRECTION MODE => LEFT, AHEAD OR RIGHT
+//======================================================
   String _getObjectDirection(
     List<dynamic> box,
     CameraImage cameraImage,
@@ -401,9 +433,12 @@ class _DetectionScreenState extends State<DetectionScreen> {
     } else {
       return "ahead";
     }
-  } // CLOSE DIRECTION MODE
+  } 
 
-  // BOUNDING BOXES OR YOLO FRAME - FRAME, LABEL COLOR, TAG, ETC
+// =====================================================
+// BOUNDING BOXES => FRAME, LABEL COLOR, TAG, ETC
+//======================================================
+ 
   List<Widget> displayBoxesAroundRecognizedObjects(Size screen) {
     if (yoloResults.isEmpty) return [];
 

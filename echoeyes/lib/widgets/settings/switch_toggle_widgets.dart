@@ -50,7 +50,7 @@ class SwitchSettingWidget extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: Colors.black,
+            activeThumbColor: Colors.black,
             activeTrackColor: Colors.grey[200],
             inactiveThumbColor: Colors.white,
             inactiveTrackColor: Colors.grey[200],
