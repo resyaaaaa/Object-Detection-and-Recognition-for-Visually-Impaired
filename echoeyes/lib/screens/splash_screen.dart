@@ -240,7 +240,7 @@ class _SplashScreenState extends State<SplashScreen>
 // LOGO IMAGE PATH
 //======================================================
   Widget _buildLogo() {
-    return Image.asset('assets/images/echoeyes2_logo.png', fit: BoxFit.contain);
+    return Image.asset('assets/images/3.png', fit: BoxFit.contain);
   }
 
 // =====================================================

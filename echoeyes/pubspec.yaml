@@ -41,9 +41,9 @@ dev_dependencies:
 # Command to run the app launcher icons ==> flutter pub run flutter_launcher_icons
 flutter_icons:
   android: true                                           # Apply icons for Android: true
-  image_path: "assets/icons/echo_icon.png"                # Launcher icon image path
+  image_path: "assets/icons/icon.png"                # Launcher icon image path
   adaptive_icon_background: "#000000"                     # Background color
-  adaptive_icon_foreground: "assets/icons/echo_icon.png"  # Foreground image path
+  adaptive_icon_foreground: "assets/icons/icon.png"  # Foreground image path
 
 
 
@@ -59,9 +59,10 @@ flutter:
     - assets/labels/label.txt           # Object class labels
     - assets/yolov8n.tflite             # Model (original)
     - assets/best_float32.tflite        # Converted version of TensorFlow Lite best-trained model
-    - assets/images/echoeyes2_logo.png  # App logo image
-    - assets/icons/echoeyes2_logo.png   # Icon variant
-    - assets/icons/echo_icon.png        # Icon (original)
+    - assets/images/1.png  # App logo image
+    - assets/images/2.png
+    - assets/images/3.png
+    - assets/icons/icon.png        # Icon (original)
 
 
   # Custom fonts used in this app
