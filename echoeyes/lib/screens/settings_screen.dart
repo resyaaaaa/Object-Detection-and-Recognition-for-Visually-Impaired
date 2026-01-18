@@ -49,7 +49,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     'fr-FR': 'French (France)',
     'de-DE': 'German (Germany)',
     'es-ES': 'Spanish (Spain)',
-    'zh-CN': 'Mandarin (Simplified)',
+    //'zh-CN': 'Mandarin (Simplified)',
   };
 
   @override
@@ -121,9 +121,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: _settings.switchMode
-            ? Colors.amberAccent[700]
-            : const Color.fromARGB(255, 217, 235, 244),
+        backgroundColor:// _settings.switchMode
+           //? Colors.amberAccent[700]
+            //:
+             const Color.fromARGB(255, 217, 235, 244),
         title: Text(
           'Error',
           style: MyTextStyles.bold.copyWith(
@@ -162,9 +163,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final save = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: _settings.switchMode
-            ? Colors.amberAccent[700]
-            : const Color.fromARGB(255, 217, 235, 244),
+        backgroundColor: //_settings.switchMode
+           // ? Colors.amberAccent[700]
+           // : 
+            const Color.fromARGB(255, 217, 235, 244),
         title: Text(
           'Unsaved Changes',
           style: MyTextStyles.bold.copyWith(
@@ -216,9 +218,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // Show 'loading' indicator while settings is load
     if (_isLoading) {
       return Scaffold(
-        backgroundColor: widget.settings.switchMode
-            ? Colors.amberAccent[700]
-            : const Color.fromARGB(255, 217, 235, 244),
+        backgroundColor:// widget.settings.switchMode
+            //? Colors.amberAccent[700]
+           // :
+             const Color.fromARGB(255, 217, 235, 244),
         body: const Center(
           child: CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation(Colors.black),
@@ -243,9 +246,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 //======================================================
       child: Scaffold(
         
-        backgroundColor: _settings.switchMode
-            ? Colors.amberAccent[700]
-            : const Color.fromARGB(255, 217, 235, 244),
+        backgroundColor:// _settings.switchMode
+           // ? Colors.amberAccent[700]
+           // : 
+            const Color.fromARGB(255, 217, 235, 244),
         appBar: _buildAppBar(),
         body: ScrollConfiguration(
           behavior: const _NoGlow(),
@@ -258,7 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _buildSection('Audio Settings', _buildAudioSettings()),
                 _buildSection('Detection Settings', _buildDetectionSettings()),
                 _buildSection('Display Settings', _buildDisplaySettings()),
-                _buildSection('Accessibility', _buildAccessibilitySettings()),
+                //_buildSection('Accessibility', _buildAccessibilitySettings()),
               ],
             ),
           ),
@@ -280,9 +284,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           fontSize: _settings.fontSize + 4,
         ),
       ),
-      backgroundColor: _settings.switchMode
-          ? Colors.amberAccent[700]
-          : const Color.fromARGB(255, 217, 235, 244),
+      backgroundColor: //_settings.switchMode
+          //? Colors.amberAccent[700]
+          //: 
+          const Color.fromARGB(255, 217, 235, 244),
       iconTheme: const IconThemeData(color: Colors.black),
       elevation: 0,
       actions: [
@@ -318,10 +323,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 // SETTINGS SECTIONS WRAPS INTO A CARD
 //======================================================
   Widget _buildSection(String title, Widget content) {
-    final highContrastMode = _settings.switchMode;
+    //final highContrastMode = _settings.switchMode;
 
     return Card(
-      color: highContrastMode ? Colors.amberAccent[700] : Colors.white,
+      color: //highContrastMode ? Colors.amberAccent[700] : 
+      Colors.white,
       elevation: 0,
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -412,7 +418,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     ],
   );
 
-  Widget _buildAccessibilitySettings() => Column(
+ /* Widget _buildAccessibilitySettings() => Column(
     children: [
       SwitchSettingWidget(
         title: 'High Contrast Mode',
@@ -422,7 +428,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         onChanged: (v) => _updateSetting((s) => s.copyWith(switchMode: v)),
       ),
     ],
-  );
+  );*/
 }
 
 // =====================================================
