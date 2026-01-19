@@ -57,7 +57,6 @@ flutter:
   # Assets included in this app
   assets:
     - assets/labels/label.txt           # Object class labels
-    - assets/yolov8n.tflite             # Model (original)
     - assets/best_float32.tflite        # Converted version of TensorFlow Lite best-trained model
     - assets/images/1.png  # App logo image
     - assets/images/2.png

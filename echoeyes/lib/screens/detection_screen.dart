@@ -375,7 +375,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
     spokenLabels.removeWhere(
       (label) =>
           now.difference(_lastSpokenTime).inMilliseconds >
-          2000, // LASTSPOKENTIME ABOVE IS 2000 MS/4S
+          2000, // LASTSPOKENTIME IS ABOVE 2000 MS
     );
 
     // DETECTION FRAME OR BOUNDING BOX DELAY DURATION
@@ -407,7 +407,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
     setState(() {
       isDetecting = false;
       // Clear detection result (STOP FROM DETECTING OBJECT)
-      //yoloResults.clear(); // Off to for testing=> screenshots purposes
+      //yoloResults.clear(); // Off for testing=> screenshots purposes
     });
   }
 
@@ -420,7 +420,7 @@ class _DetectionScreenState extends State<DetectionScreen> {
     Size previewSize,
   ) {
     double frameWidth = previewSize.width / cameraImage.height;
-    double centerX = ((box[0] + box[2]) / 2.0) * frameWidth; // To determine the center ==> bject's centerX
+    double centerX = ((box[0] + box[2]) / 2.0) * frameWidth; // To determine the center ==> object's centerX
 
 
     double dirSection =

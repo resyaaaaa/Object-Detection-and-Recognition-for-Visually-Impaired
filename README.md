@@ -81,7 +81,7 @@ flutter run
       settings_screen.dart      → settings screen
       splash_screen.dart        → Launch screen
       
-  README.md       → Project documentation
+  README.md       → Project documentation, dataset, etc.
 ```
 
 ---
